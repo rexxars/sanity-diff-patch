@@ -1,4 +1,7 @@
 const ignoredKeys = ['_id', '_type', '_createdAt', '_updatedAt', '_rev']
+const idPattern = /^[a-z0-9][a-z0-9_.-]+$/i
+const keyPattern = /^[a-zA-Z_][a-zA-Z0-9_]+$/
+const keyStartPattern = /^[a-z_]/i
 
 type PrimitiveValue = string | number | boolean | null | undefined
 type PathSegment = string | number | {_key: string} | [number | '', number | '']
@@ -124,9 +127,15 @@ function diffItem(itemA: unknown, itemB: unknown, path: Path, patches: Patch[]) 
 
 function diffObject(itemA: SanityObject, itemB: SanityObject, path: Path, patches: Patch[]) {
   const atRoot = path.length === 0
-  const aKeys = Object.keys(itemA).filter(atRoot ? withoutReadOnly : yes)
+  const aKeys = Object.keys(itemA)
+    .filter(atRoot ? isNotIgnoredKey : yes)
+    .map(key => validateKey(key, itemA[key], path))
+
   const aKeysLength = aKeys.length
-  const bKeys = Object.keys(itemB).filter(atRoot ? withoutReadOnly : yes)
+  const bKeys = Object.keys(itemB)
+    .filter(atRoot ? isNotIgnoredKey : yes)
+    .map(key => validateKey(key, itemB[key], path))
+
   const bKeysLength = bKeys.length
 
   // Check for deleted items
@@ -163,6 +172,13 @@ function diffArray(itemA: any[], itemB: any[], path: Path, patches: Patch[]) {
       op: 'unset',
       path: path.concat([isSingle ? itemB.length : [itemB.length, '']])
     })
+  }
+
+  // Check for illegal array contents
+  for (let i = 0; i < itemB.length; i++) {
+    if (Array.isArray(itemB[i])) {
+      throw new DiffError('Multi-dimensional arrays not supported', path.concat(i))
+    }
   }
 
   const overlapping = Math.min(itemA.length, itemB.length)
@@ -220,7 +236,7 @@ function diffPrimitive(
   return patches
 }
 
-function withoutReadOnly(key: string) {
+function isNotIgnoredKey(key: string) {
   return ignoredKeys.indexOf(key) === -1
 }
 
@@ -330,6 +346,62 @@ function pathToString(path: Path): string {
 
     throw new Error(`Unsupported path segment "${segment}"`)
   }, '')
+}
+
+function validateKey(key: string, value: any, path: Path): string {
+  if (!keyStartPattern.test(key)) {
+    throw new DiffError('Keys must start with a letter (a-z)', path.concat(key))
+  }
+
+  if (!keyPattern.test(key)) {
+    throw new DiffError('Keys can only contain letters, numbers and underscores', path.concat(key))
+  }
+
+  if (key === '_key') {
+    if (typeof value !== 'string') {
+      throw new DiffError('Keys must be strings', path.concat(key))
+    }
+
+    if (!idPattern.test(value)) {
+      throw new DiffError('Invalid key - use less exotic characters', path.concat(key))
+    }
+  }
+
+  return key
+}
+
+export function validateDocument(item: unknown, path: Path = []): boolean {
+  if (Array.isArray(item)) {
+    return item.every((child, i) => {
+      if (Array.isArray(child)) {
+        throw new DiffError('Multi-dimensional arrays not supported', path.concat(i))
+      }
+
+      return validateDocument(child, path.concat(i))
+    })
+  }
+
+  if (typeof item === 'object' && item !== null) {
+    const obj = item as {[key: string]: any}
+    return Object.keys(obj).every(
+      key => validateKey(key, obj[key], path) && validateDocument(obj[key], path.concat(key))
+    )
+  }
+
+  return true
+}
+
+class DiffError extends Error {
+  public path: Path
+  public serializedPath: string
+
+  constructor(message: string, path: Path) {
+    const serializedPath = pathToString(path)
+    super(`${message} (at '${serializedPath}')`)
+
+    this.path = path
+    this.serializedPath = serializedPath
+  }
 }
 
 function yes(_: any) {
