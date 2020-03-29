@@ -19,7 +19,8 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build"
+    "prepare": "tsdx build",
+    "coverage": "tsdx test --coverage"
   },
   "peerDependencies": {},
   "prettier": {
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@sanity/client": "^1.149.2",
+    "@types/diff-match-patch": "^1.0.32",
     "@types/jest": "^25.1.4",
     "eslint-config-prettier": "^6.10.1",
     "eslint-config-sanity": "^1.149.0",
@@ -40,5 +42,8 @@
   },
   "jest": {
     "testEnvironment": "node"
+  },
+  "dependencies": {
+    "diff-match-patch": "^1.0.4"
   }
 }

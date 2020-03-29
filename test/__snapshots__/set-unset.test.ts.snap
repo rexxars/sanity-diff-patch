@@ -31,6 +31,7 @@ Array [
       "unset": Array [
         "year",
         "slug.auto",
+        "arr[1]",
       ],
     },
   },

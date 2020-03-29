@@ -17,7 +17,13 @@ export interface InsertPatch {
   items: any[]
 }
 
-export type Patch = SetPatch | UnsetPatch | InsertPatch
+export interface DiffMatchPatch {
+  op: 'diffMatchPatch'
+  path: Path
+  value: string
+}
+
+export type Patch = SetPatch | UnsetPatch | InsertPatch | DiffMatchPatch
 
 export interface SanitySetPatch {
   id: string
@@ -37,7 +43,16 @@ export interface SanityInsertPatch {
     | {replace: string; items: any[]}
 }
 
-export type SanityPatch = SanitySetPatch | SanityUnsetPatch | SanityInsertPatch
+export interface SanityDiffMatchPatch {
+  id: string
+  diffMatchPatch: {[key: string]: string}
+}
+
+export type SanityPatch =
+  | SanitySetPatch
+  | SanityUnsetPatch
+  | SanityInsertPatch
+  | SanityDiffMatchPatch
 
 export interface SanityPatchMutation {
   patch: SanityPatch

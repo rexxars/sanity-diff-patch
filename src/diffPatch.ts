@@ -1,16 +1,19 @@
+import {diff_match_patch as DMP} from 'diff-match-patch'
 import {DiffError} from './diffError'
 import {Path, pathToString} from './paths'
 import {validateKey} from './validate'
 import {
   Patch,
+  SetPatch,
+  UnsetPatch,
   InsertPatch,
+  DiffMatchPatch,
   SanityInsertPatch,
   SanityPatch,
-  SanityPatchMutation,
   SanitySetPatch,
   SanityUnsetPatch,
-  SetPatch,
-  UnsetPatch
+  SanityDiffMatchPatch,
+  SanityPatchMutation
 } from './patches'
 
 const ignoredKeys = ['_id', '_type', '_createdAt', '_updatedAt', '_rev']
@@ -33,14 +36,52 @@ interface DocumentStub {
   [key: string]: any
 }
 
-interface PatchOptions {
-  id?: string
-  ifRevisionID?: string
-  ifRevisionId?: string
-  basePath?: Path
+interface DiffMatchPatchOptions {
+  enabled: boolean
+  lengthThresholdAbsolute: number
+  lengthThresholdRelative: number
 }
 
-export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, options: PatchOptions = {}) {
+interface PatchOptions {
+  id?: string
+  basePath?: Path
+  ifRevisionID?: string
+  ifRevisionId?: string
+  diffMatchPatch: DiffMatchPatchOptions
+}
+
+type InputOptions = {
+  id?: string
+  basePath?: Path
+  ifRevisionID?: string
+  ifRevisionId?: string
+  diffMatchPatch?: Partial<DiffMatchPatchOptions>
+}
+
+const diff = new DMP()
+
+const defaultOptions: PatchOptions = {
+  diffMatchPatch: {
+    enabled: true,
+
+    // Only use diff-match-patch if target string is longer than this threshold
+    lengthThresholdAbsolute: 30,
+
+    // Only use generated diff-match-patch if the patch length is less than or equal to
+    // (targetString * relative). Example: A 100 character target with a relative factor
+    // of 1.2 will allow a 120 character diff-match-patch. If larger than this number,
+    // it will fall back to a regular `set` patch.
+    lengthThresholdRelative: 1.2
+  }
+}
+
+export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts: InputOptions = {}) {
+  const options = {
+    ...defaultOptions,
+    ...opts,
+    diffMatchPatch: {...defaultOptions.diffMatchPatch, ...(opts.diffMatchPatch || {})}
+  }
+
   const id = options.id || (itemA._id === itemB._id && itemA._id)
   const ifRevisionID = options.ifRevisionID || options.ifRevisionId
   if (!id) {
@@ -50,11 +91,17 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, options: Pat
   }
 
   const basePath = options.basePath || []
-  const operations = diffItem(itemA, itemB, basePath, [])
+  const operations = diffItem(itemA, itemB, basePath, [], options)
   return serializePatches(operations, {id, ifRevisionID})
 }
 
-function diffItem(itemA: unknown, itemB: unknown, path: Path, patches: Patch[]) {
+function diffItem(
+  itemA: unknown,
+  itemB: unknown,
+  path: Path,
+  patches: Patch[],
+  options: PatchOptions
+) {
   if (itemA === itemB) {
     return patches
   }
@@ -78,7 +125,7 @@ function diffItem(itemA: unknown, itemB: unknown, path: Path, patches: Patch[]) 
   const dataType = aIsUndefined ? bType : aType
   const isContainer = dataType === 'object' || dataType === 'array'
   if (!isContainer) {
-    return diffPrimitive(itemA as PrimitiveValue, itemB as PrimitiveValue, path, patches)
+    return diffPrimitive(itemA as PrimitiveValue, itemB as PrimitiveValue, path, patches, options)
   }
 
   if (aType !== bType) {
@@ -88,11 +135,17 @@ function diffItem(itemA: unknown, itemB: unknown, path: Path, patches: Patch[]) 
   }
 
   return dataType === 'array'
-    ? diffArray(itemA as any[], itemB as any[], path, patches)
-    : diffObject(itemA as object, itemB as object, path, patches)
+    ? diffArray(itemA as any[], itemB as any[], path, patches, options)
+    : diffObject(itemA as object, itemB as object, path, patches, options)
 }
 
-function diffObject(itemA: SanityObject, itemB: SanityObject, path: Path, patches: Patch[]) {
+function diffObject(
+  itemA: SanityObject,
+  itemB: SanityObject,
+  path: Path,
+  patches: Patch[],
+  options: PatchOptions
+) {
   const atRoot = path.length === 0
   const aKeys = Object.keys(itemA)
     .filter(atRoot ? isNotIgnoredKey : yes)
@@ -116,13 +169,19 @@ function diffObject(itemA: SanityObject, itemB: SanityObject, path: Path, patche
   // Check for changed items
   for (let i = 0; i < bKeysLength; i++) {
     const key = bKeys[i]
-    diffItem(itemA[key], itemB[key], path.concat([key]), patches)
+    diffItem(itemA[key], itemB[key], path.concat([key]), patches, options)
   }
 
   return patches
 }
 
-function diffArray(itemA: any[], itemB: any[], path: Path, patches: Patch[]) {
+function diffArray(
+  itemA: any[],
+  itemB: any[],
+  path: Path,
+  patches: Patch[],
+  options: PatchOptions
+) {
   // Check for new items
   if (itemB.length > itemA.length) {
     patches.push({
@@ -153,13 +212,19 @@ function diffArray(itemA: any[], itemB: any[], path: Path, patches: Patch[]) {
   const segmentB = itemB.slice(0, overlapping)
   const isKeyed = isUniquelyKeyed(segmentA) && isUniquelyKeyed(segmentB)
   return isKeyed
-    ? diffArrayByKey(segmentA, segmentB, path, patches)
-    : diffArrayByIndex(segmentA, segmentB, path, patches)
+    ? diffArrayByKey(segmentA, segmentB, path, patches, options)
+    : diffArrayByIndex(segmentA, segmentB, path, patches, options)
 }
 
-function diffArrayByIndex(itemA: any[], itemB: any[], path: Path, patches: Patch[]) {
+function diffArrayByIndex(
+  itemA: any[],
+  itemB: any[],
+  path: Path,
+  patches: Patch[],
+  options: PatchOptions
+) {
   for (let i = 0; i < itemA.length; i++) {
-    diffItem(itemA[i], itemB[i], path.concat(i), patches)
+    diffItem(itemA[i], itemB[i], path.concat(i), patches, options)
   }
 
   return patches
@@ -169,7 +234,8 @@ function diffArrayByKey(
   itemA: KeyedSanityObject[],
   itemB: KeyedSanityObject[],
   path: Path,
-  patches: Patch[]
+  patches: Patch[],
+  options: PatchOptions
 ) {
   const keyedA = indexByKey(itemA)
   const keyedB = indexByKey(itemB)
@@ -177,28 +243,73 @@ function diffArrayByKey(
   // There's a bunch of hard/semi-hard problems related to using keys
   // Unless we have the exact same order, just use indexes for now
   if (!arrayIsEqual(keyedA.keys, keyedB.keys)) {
-    return diffArrayByIndex(itemA, itemB, path, patches)
+    return diffArrayByIndex(itemA, itemB, path, patches, options)
   }
 
   for (let i = 0; i < keyedB.keys.length; i++) {
     const key = keyedB.keys[i]
-    diffItem(keyedA.index[key], keyedB.index[key], path.concat({_key: key}), patches)
+    diffItem(keyedA.index[key], keyedB.index[key], path.concat({_key: key}), patches, options)
   }
 
   return patches
 }
 
-function diffPrimitive(
-  _itemA: PrimitiveValue,
+function getDiffMatchPatch(
+  itemA: PrimitiveValue,
   itemB: PrimitiveValue,
   path: Path,
-  patches: Patch[]
-) {
-  patches.push({
-    op: 'set',
-    path,
-    value: itemB
-  })
+  options: PatchOptions
+): DiffMatchPatch | undefined {
+  const {enabled, lengthThresholdRelative, lengthThresholdAbsolute} = options.diffMatchPatch
+  const segment = path[path.length - 1]
+  if (
+    !enabled ||
+    // Don't use for anything but strings
+    typeof itemA !== 'string' ||
+    typeof itemB !== 'string' ||
+    // Don't use for `_key`, `_ref` etc
+    (typeof segment === 'string' && segment[0] === '_') ||
+    // Don't use on short strings
+    itemB.length < lengthThresholdAbsolute
+  ) {
+    return undefined
+  }
+
+  let strPatch = ''
+  try {
+    const patch = diff.diff_main(itemA, itemB)
+    diff.diff_cleanupEfficiency(patch)
+    strPatch = diff.patch_toText(diff.patch_make(patch))
+  } catch (err) {
+    // Fall back to using regular set patch
+    return undefined
+  }
+
+  // Don't use patch if it's longer than allowed relative threshold.
+  // Allow a 120 character patch for a 100 character string,
+  // but don't allow a 800 character patch for a 500 character value.
+  //console.log('%s:\n patch is %d, string is %d', itemB, strPatch.length, itemB.length)
+  return strPatch.length > itemB.length * lengthThresholdRelative
+    ? undefined
+    : {op: 'diffMatchPatch', path, value: strPatch}
+}
+
+function diffPrimitive(
+  itemA: PrimitiveValue,
+  itemB: PrimitiveValue,
+  path: Path,
+  patches: Patch[],
+  options: PatchOptions
+): Patch[] {
+  const dmp = getDiffMatchPatch(itemA, itemB, path, options)
+
+  patches.push(
+    dmp || {
+      op: 'set',
+      path,
+      value: itemB
+    }
+  )
 
   return patches
 }
@@ -209,7 +320,7 @@ function isNotIgnoredKey(key: string) {
 
 function serializePatches(
   patches: Patch[],
-  options: PatchOptions & {id: string}
+  options: {id: string; ifRevisionID?: string}
 ): SanityPatchMutation[] {
   if (patches.length === 0) {
     return []
@@ -219,6 +330,7 @@ function serializePatches(
   const set = patches.filter((patch): patch is SetPatch => patch.op === 'set')
   const unset = patches.filter((patch): patch is UnsetPatch => patch.op === 'unset')
   const insert = patches.filter((patch): patch is InsertPatch => patch.op === 'insert')
+  const dmp = patches.filter((patch): patch is DiffMatchPatch => patch.op === 'diffMatchPatch')
 
   const withSet =
     set.length > 0 &&
@@ -247,7 +359,18 @@ function serializePatches(
     return acc.concat({id, insert: {after, items: item.items}})
   }, [])
 
-  const patchSet: SanityPatch[] = [withSet, withUnset, ...withInsert].filter(
+  const withDmp =
+    dmp.length > 0 &&
+    dmp.reduce(
+      (patch: SanityDiffMatchPatch, item: DiffMatchPatch) => {
+        const path = pathToString(item.path)
+        patch.diffMatchPatch[path] = item.value
+        return patch
+      },
+      {id, diffMatchPatch: {}}
+    )
+
+  const patchSet: SanityPatch[] = [withSet, withUnset, withDmp, ...withInsert].filter(
     (item): item is SanityPatch => item !== false
   )
 
