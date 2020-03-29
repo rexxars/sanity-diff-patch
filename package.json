@@ -11,6 +11,13 @@
     "dist",
     "src"
   ],
+  "keywords": [
+    "sanity",
+    "patch",
+    "diff",
+    "mutation",
+    "compare"
+  ],
   "engines": {
     "node": ">=10"
   },
