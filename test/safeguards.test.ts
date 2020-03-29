@@ -1,11 +1,20 @@
 import {diffPatch, validateDocument} from '../src'
 
 describe('safeguards', () => {
-  test('cannot change `_type` at root', () => {
+  test('throws when attempting to change `_type` at root', () => {
+    expect(() => {
+      diffPatch({_id: 'foo', _type: 'bar'}, {_id: 'foo', _type: 'bar2'})
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"_type is immutable and cannot be changed (bar => bar2)"`
+    )
+  })
+
+  test('changing non-root `_type` is allowed', () => {
     expect(
       diffPatch(
-        {_id: 'foo', _type: 'bar', author: {_type: 'author', name: 'Espen'}},
-        {_id: 'foo', _type: 'bar2', author: {_type: 'person', name: 'Espen'}}
+        {_type: 'author', name: 'Espen'},
+        {_type: 'person', name: 'Espen'},
+        {basePath: ['author'], id: 'foo'}
       )
     ).toEqual([
       {

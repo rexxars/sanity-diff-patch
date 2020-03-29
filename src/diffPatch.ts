@@ -84,13 +84,17 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts: InputO
 
   const id = options.id || (itemA._id === itemB._id && itemA._id)
   const ifRevisionID = options.ifRevisionID || options.ifRevisionId
+  const basePath = options.basePath || []
   if (!id) {
     throw new Error(
       '_id on itemA and itemB not present or differs, specify document id the mutations should be applied to'
     )
   }
 
-  const basePath = options.basePath || []
+  if (basePath.length === 0 && itemA._type !== itemB._type) {
+    throw new Error(`_type is immutable and cannot be changed (${itemA._type} => ${itemB._type})`)
+  }
+
   const operations = diffItem(itemA, itemB, basePath, [], options)
   return serializePatches(operations, {id, ifRevisionID})
 }

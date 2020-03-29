@@ -11,13 +11,14 @@ function omitIgnored(obj: {[key: string]: any}): {[key: string]: any} {
 }
 
 /* eslint-disable no-process-env */
+const enabled = process.env.ENABLE_INTEGRATION_TESTS || ''
 const projectId = process.env.SANITY_TEST_PROJECT_ID || ''
 const dataset = process.env.SANITY_TEST_DATASET || ''
 const token = process.env.SANITY_TEST_TOKEN || ''
 /* eslint-enable no-process-env */
 
 const queue = new PQueue({concurrency: 4})
-const describeIt = projectId && dataset && token ? describe : describe.skip
+const describeIt = enabled && projectId && dataset && token ? describe : describe.skip
 
 interface FixturePair {
   input: any
