@@ -20,6 +20,7 @@ Array [
     "patch": Object {
       "id": "die-hard-iii",
       "set": Object {
+        "arr[1]": null,
         "slug._type": "slug",
         "slug.current": "die-hard-with-a-vengeance",
       },
@@ -31,7 +32,6 @@ Array [
       "unset": Array [
         "year",
         "slug.auto",
-        "arr[1]",
       ],
     },
   },

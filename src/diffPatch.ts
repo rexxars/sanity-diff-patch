@@ -47,6 +47,7 @@ interface PatchOptions {
   basePath?: Path
   ifRevisionID?: string
   ifRevisionId?: string
+  hideWarnings?: boolean
   diffMatchPatch: DiffMatchPatchOptions
 }
 
@@ -55,12 +56,14 @@ type InputOptions = {
   basePath?: Path
   ifRevisionID?: string
   ifRevisionId?: string
+  hideWarnings?: boolean
   diffMatchPatch?: Partial<DiffMatchPatchOptions>
 }
 
 const diff = new DMP()
 
 const defaultOptions: PatchOptions = {
+  hideWarnings: false,
   diffMatchPatch: {
     enabled: true,
 
@@ -191,7 +194,7 @@ function diffArray(
     patches.push({
       op: 'insert',
       after: path.concat([-1]),
-      items: itemB.slice(itemA.length)
+      items: itemB.slice(itemA.length).map((item, i) => nullifyUndefined(item, path, i, options))
     })
   }
 
@@ -228,7 +231,13 @@ function diffArrayByIndex(
   options: PatchOptions
 ) {
   for (let i = 0; i < itemA.length; i++) {
-    diffItem(itemA[i], itemB[i], path.concat(i), patches, options)
+    diffItem(
+      itemA[i],
+      nullifyUndefined(itemB[i], path, i, options),
+      path.concat(i),
+      patches,
+      options
+    )
   }
 
   return patches
@@ -252,7 +261,9 @@ function diffArrayByKey(
 
   for (let i = 0; i < keyedB.keys.length; i++) {
     const key = keyedB.keys[i]
-    diffItem(keyedA.index[key], keyedB.index[key], path.concat({_key: key}), patches, options)
+    const valueA = keyedA.index[key]
+    const valueB = nullifyUndefined(keyedB.index[key], path, i, options)
+    diffItem(valueA, valueB, path.concat({_key: key}), patches, options)
   }
 
   return patches
@@ -411,6 +422,19 @@ function indexByKey(arr: KeyedSanityObject[]) {
 
 function arrayIsEqual(itemA: any[], itemB: any[]) {
   return itemA.length === itemB.length && itemA.every((item, i) => itemB[i] === item)
+}
+
+function nullifyUndefined(item: unknown, path: Path, index: number, options: PatchOptions) {
+  if (typeof item !== 'undefined') {
+    return item
+  }
+
+  if (!options.hideWarnings) {
+    const serializedPath = pathToString(path.concat(index))
+    console.warn(`undefined value in array converted to null (at '${serializedPath}')`)
+  }
+
+  return null
 }
 
 function yes(_: any) {

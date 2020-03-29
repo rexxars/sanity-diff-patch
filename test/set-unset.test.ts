@@ -5,18 +5,18 @@ import * as setAndUnset from './fixtures/set-and-unset'
 
 describe('set/unset', () => {
   test('simple root-level changes', () => {
-    expect(diffPatch(simple.a, simple.b)).toMatchSnapshot()
+    expect(diffPatch(simple.a, simple.b, {hideWarnings: true})).toMatchSnapshot()
   })
 
   test('basic nested changes', () => {
-    expect(diffPatch(nested.a, nested.b)).toMatchSnapshot()
+    expect(diffPatch(nested.a, nested.b, {hideWarnings: true})).toMatchSnapshot()
   })
 
   test('set + unset, nested changes', () => {
-    expect(diffPatch(setAndUnset.a, setAndUnset.b)).toMatchSnapshot()
+    expect(diffPatch(setAndUnset.a, setAndUnset.b, {hideWarnings: true})).toMatchSnapshot()
   })
 
   test('no diff', () => {
-    expect(diffPatch(nested.a, nested.a)).toEqual([])
+    expect(diffPatch(nested.a, nested.a, {hideWarnings: true})).toEqual([])
   })
 })

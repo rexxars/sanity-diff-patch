@@ -10,6 +10,23 @@ function omitIgnored(obj: {[key: string]: any}): {[key: string]: any} {
   return rest
 }
 
+function nullifyUndefinedArrayItems(item: unknown): unknown {
+  if (Array.isArray(item)) {
+    return item.map(child =>
+      typeof child === 'undefined' ? null : nullifyUndefinedArrayItems(child)
+    )
+  }
+
+  if (typeof item === 'object' && item !== null) {
+    const obj = item as {[key: string]: any}
+    return Object.keys(obj).reduce((acc: {[key: string]: any}, key: string) => {
+      return {...acc, [key]: nullifyUndefinedArrayItems(obj[key])}
+    }, {})
+  }
+
+  return item
+}
+
 /* eslint-disable no-process-env */
 const enabled = process.env.ENABLE_INTEGRATION_TESTS || ''
 const projectId = process.env.SANITY_TEST_PROJECT_ID || ''
@@ -40,6 +57,8 @@ interface JsFixture {
 }
 
 describeIt('integration tests', () => {
+  jest.setTimeout(120000)
+
   const client = new SanityClient({projectId, dataset, token, useCdn: false})
   const fixturesDir = path.join(__dirname, 'fixtures')
   const jsonFixturesDir = path.join(fixturesDir, 'integration')
@@ -80,7 +99,7 @@ describeIt('integration tests', () => {
 
       const input = Object.assign({}, fix.fixture.input, {_id, _type})
       const output = Object.assign({}, fix.fixture.output, {_id, _type})
-      const diff = diffPatch(input, output)
+      const diff = diffPatch(input, output, {hideWarnings: true})
 
       const trx = client
         .transaction()
@@ -91,7 +110,7 @@ describeIt('integration tests', () => {
         client.transaction(trx.concat(diff)).commit({visibility: 'async', returnDocuments: true})
       )
 
-      expect(omitIgnored(result[0])).toEqual(omitIgnored(output))
+      expect(omitIgnored(result[0])).toEqual(nullifyUndefinedArrayItems(omitIgnored(output)))
     })
   )
 })
