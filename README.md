@@ -1,6 +1,6 @@
 # sanity-diff-patch
 
-[![npm version](http://img.shields.io/npm/v/sanity-diff-patch.svg?style=flat-square)](https://www.npmjs.com/package/sanity-diff-patch)[![npm bundle size](https://img.shields.io/bundlephobia/minzip/sanity-diff-patch.svg?style=flat-square)](https://bundlephobia.com/result?p=sanity-diff-patch)[![Build Status](http://img.shields.io/travis/rexxars/sanity-diff-patch/master.svg?style=flat-square)](https://travis-ci.org/rexxars/sanity-diff-patch)
+[![npm version](http://img.shields.io/npm/v/sanity-diff-patch.svg?style=flat-square)](https://www.npmjs.com/package/sanity-diff-patch)[![npm bundle size](https://img.shields.io/bundlephobia/minzip/sanity-diff-patch.svg?style=flat-square)](https://bundlephobia.com/result?p=sanity-diff-patch)[![Build Status](http://img.shields.io/travis/rexxars/sanity-diff-patch/master.svg?style=flat-square)](https://travis-ci.com/rexxars/sanity-diff-patch)
 
 Generates a set of Sanity patches needed to change an item (usually a document) from one shape to another.
 

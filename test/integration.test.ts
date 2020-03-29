@@ -106,11 +106,15 @@ describeIt('integration tests', () => {
         .createOrReplace(input)
         .serialize()
 
+      const transaction = (trx as unknown) as any[] // temporary fix for typing error
+
       const result = await queue.add(() =>
-        client.transaction(trx.concat(diff)).commit({visibility: 'async', returnDocuments: true})
+        client
+          .transaction(transaction.concat(diff))
+          .commit({visibility: 'async', returnDocuments: true, returnFirst: true})
       )
 
-      expect(omitIgnored(result[0])).toEqual(nullifyUndefinedArrayItems(omitIgnored(output)))
+      expect(omitIgnored(result)).toEqual(nullifyUndefinedArrayItems(omitIgnored(output)))
     })
   )
 })
