@@ -45,8 +45,8 @@ interface DiffMatchPatchOptions {
 interface PatchOptions {
   id?: string
   basePath?: Path
-  ifRevisionID?: string
-  ifRevisionId?: string
+  ifRevisionID?: string | boolean
+  ifRevisionId?: string | boolean
   hideWarnings?: boolean
   diffMatchPatch: DiffMatchPatchOptions
 }
@@ -54,8 +54,8 @@ interface PatchOptions {
 type InputOptions = {
   id?: string
   basePath?: Path
-  ifRevisionID?: string
-  ifRevisionId?: string
+  ifRevisionID?: string | boolean
+  ifRevisionId?: string | boolean
   hideWarnings?: boolean
   diffMatchPatch?: Partial<DiffMatchPatchOptions>
 }
@@ -86,11 +86,18 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts: InputO
   }
 
   const id = options.id || (itemA._id === itemB._id && itemA._id)
-  const ifRevisionID = options.ifRevisionID || options.ifRevisionId
+  const revisionLocked = options.ifRevisionID || options.ifRevisionId
+  const ifRevisionID = typeof revisionLocked === 'boolean' ? itemA._rev : revisionLocked
   const basePath = options.basePath || []
   if (!id) {
     throw new Error(
       '_id on itemA and itemB not present or differs, specify document id the mutations should be applied to'
+    )
+  }
+
+  if (revisionLocked === true && !ifRevisionID) {
+    throw new Error(
+      '`ifRevisionID` is set to `true`, but no `_rev` was passed in item A. Either explicitly set `ifRevisionID` to a revision, or pass `_rev` as part of item A.'
     )
   }
 
@@ -99,7 +106,7 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts: InputO
   }
 
   const operations = diffItem(itemA, itemB, basePath, [], options)
-  return serializePatches(operations, {id, ifRevisionID})
+  return serializePatches(operations, {id, ifRevisionID: revisionLocked ? ifRevisionID : undefined})
 }
 
 function diffItem(

@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ifRevisionID can apply revision constraint (inferred from document) 1`] = `
+Array [
+  Object {
+    "patch": Object {
+      "id": "die-hard-iii",
+      "ifRevisionID": "datrev",
+      "set": Object {
+        "rating": 4,
+        "title": "Die Hard with a Vengeance",
+      },
+    },
+  },
+]
+`;
+
+exports[`ifRevisionID can apply revision constraint (lowercase) 1`] = `
+Array [
+  Object {
+    "patch": Object {
+      "id": "die-hard-iii",
+      "ifRevisionID": "abc123",
+      "set": Object {
+        "rating": 4,
+        "title": "Die Hard with a Vengeance",
+      },
+    },
+  },
+]
+`;
+
+exports[`ifRevisionID can apply revision constraint (uppercase) 1`] = `
+Array [
+  Object {
+    "patch": Object {
+      "id": "die-hard-iii",
+      "ifRevisionID": "abc123",
+      "set": Object {
+        "rating": 4,
+        "title": "Die Hard with a Vengeance",
+      },
+    },
+  },
+]
+`;
+
+exports[`ifRevisionID can set revision constraint to false) 1`] = `
+Array [
+  Object {
+    "patch": Object {
+      "id": "die-hard-iii",
+      "set": Object {
+        "rating": 4,
+        "title": "Die Hard with a Vengeance",
+      },
+    },
+  },
+]
+`;
