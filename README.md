@@ -96,6 +96,44 @@ const generatedPatches = [
 }
 ```
 
+## diff-match-patch
+
+When encountering two strings to compare, this module will (by default) attempt to use [diff-match-patch (DMP)](https://www.sanity.io/docs/http-patches#diffmatchpatch-aTbJhlAJ) to transition the string from one state to the next.
+
+While these patches are extremely helpful (especially in a real-time, collaborative environment), they sometimes grow quite large and can be hard for humans to read. There are a few options you can use to tweak _when_ this module will use these patches, and when to fall back to a regular `set`-patch instead.
+
+The default rules says:
+
+- If the target string is below 30 characters long, don't use DMP
+- If the generated DMP is greater than 1.2 times larger than the target string, don't use DMP
+
+To tune these rules, you can pass options to the differ:
+
+```js
+import {diffPatch} from 'sanity-diff-patch'
+
+diffPatch(itemA, itemB, {
+  diffMatchPatch: {
+    // Default is true, set to false to _always_ use `set`-patches
+    enabled: true,
+
+    // Only use diff-match-patch if target string is longer than this threshold
+    lengthThresholdAbsolute: 30,
+
+    // Only use generated diff-match-patch if the patch length is less than or equal to
+    // (targetString * relative). Example: A 100 character target with a relative factor
+    // of 1.2 will allow a 120 character diff-match-patch. If larger than this number,
+    // it will fall back to a regular `set` patch.
+    lengthThresholdRelative: 1.2
+  }
+})
+```
+
+In addition to these rules, there are certain cases where it will never use diff-match-patch:
+
+- If the patched key starts with an underscore (eg `_type`, `_key`, `_ref`)
+- If the diff-match-patch implementation cannot generate a legal patch due to unicode issues
+
 ## Needs improvement
 
 - Improve patch on array item move
