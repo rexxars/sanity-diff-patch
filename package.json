@@ -1,7 +1,7 @@
 {
-  "name": "@rexxars/sanity-diff-patch",
+  "name": "sanity-diff-patch",
   "version": "0.1.0",
-  "description": "Generates a set of Sanity patches by comparing two JSON structures",
+  "description": "Generates a set of Sanity patches needed to change an item (usually a document) from one shape to another",
   "main": "dist/index.js",
   "module": "dist/sanity-diff-patch.esm.js",
   "typings": "dist/sanity-diff-patch.d.ts",
