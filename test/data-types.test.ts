@@ -1,4 +1,4 @@
-import {diffPatch} from '../src/diff-patch'
+import {diffPatch} from '../src'
 import * as dataTypes from './fixtures/data-types'
 import * as typeChange from './fixtures/type-change'
 

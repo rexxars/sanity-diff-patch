@@ -1,4 +1,4 @@
-import {diffPatch} from '../src/diff-patch'
+import {diffPatch} from '../src'
 import * as objectArrayAdd from './fixtures/object-array-add'
 import * as objectArrayRemove from './fixtures/object-array-remove'
 import * as objectArrayChange from './fixtures/object-array-change'

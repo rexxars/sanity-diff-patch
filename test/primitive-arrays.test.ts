@@ -1,4 +1,4 @@
-import {diffPatch} from '../src/diff-patch'
+import {diffPatch} from '../src'
 import * as primitiveArrayAdd from './fixtures/primitive-array-add'
 import * as primitiveArrayRemove from './fixtures/primitive-array-remove'
 

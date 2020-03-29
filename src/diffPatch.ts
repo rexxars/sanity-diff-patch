@@ -1,18 +1,28 @@
+import {DiffError} from './diffError'
+import {Path, pathToString} from './paths'
+import {validateKey} from './validate'
+import {
+  Patch,
+  InsertPatch,
+  SanityInsertPatch,
+  SanityPatch,
+  SanityPatchMutation,
+  SanitySetPatch,
+  SanityUnsetPatch,
+  SetPatch,
+  UnsetPatch
+} from './patches'
+
 const ignoredKeys = ['_id', '_type', '_createdAt', '_updatedAt', '_rev']
-const idPattern = /^[a-z0-9][a-z0-9_.-]+$/i
-const keyPattern = /^[a-zA-Z_][a-zA-Z0-9_]+$/
-const keyStartPattern = /^[a-z_]/i
 
 type PrimitiveValue = string | number | boolean | null | undefined
-type PathSegment = string | number | {_key: string} | [number | '', number | '']
-type Path = PathSegment[]
 
-interface KeyedSanityObject {
+export interface KeyedSanityObject {
   [key: string]: any
   _key: string
 }
 
-type SanityObject = KeyedSanityObject | Partial<KeyedSanityObject>
+export type SanityObject = KeyedSanityObject | Partial<KeyedSanityObject>
 
 interface DocumentStub {
   _id?: string
@@ -28,49 +38,6 @@ interface PatchOptions {
   ifRevisionID?: string
   ifRevisionId?: string
   basePath?: Path
-}
-
-interface SetPatch {
-  op: 'set'
-  path: Path
-  value: unknown
-}
-
-interface UnsetPatch {
-  op: 'unset'
-  path: Path
-}
-
-interface InsertPatch {
-  op: 'insert'
-  after: Path
-  items: any[]
-}
-
-type Patch = SetPatch | UnsetPatch | InsertPatch
-
-interface SanitySetPatch {
-  id: string
-  set: {[key: string]: any}
-}
-
-interface SanityUnsetPatch {
-  id: string
-  unset: string[]
-}
-
-interface SanityInsertPatch {
-  id: string
-  insert:
-    | {before: string; items: any[]}
-    | {after: string; items: any[]}
-    | {replace: string; items: any[]}
-}
-
-type SanityPatch = SanitySetPatch | SanityUnsetPatch | SanityInsertPatch
-
-interface SanityPatchMutation {
-  patch: SanityPatch
 }
 
 export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, options: PatchOptions = {}) {
@@ -304,10 +271,6 @@ function isUniquelyKeyed(arr: any[]): arr is KeyedSanityObject[] {
   return true
 }
 
-function isKeyedObject(obj: any): obj is KeyedSanityObject {
-  return typeof obj === 'object' && typeof obj._key === 'string'
-}
-
 function indexByKey(arr: KeyedSanityObject[]) {
   return arr.reduce(
     (acc, item) => {
@@ -321,87 +284,6 @@ function indexByKey(arr: KeyedSanityObject[]) {
 
 function arrayIsEqual(itemA: any[], itemB: any[]) {
   return itemA.length === itemB.length && itemA.every((item, i) => itemB[i] === item)
-}
-
-function pathToString(path: Path): string {
-  return path.reduce((target: string, segment: PathSegment, i: number) => {
-    if (Array.isArray(segment)) {
-      return `${target}[${segment.join(':')}]`
-    }
-
-    if (isKeyedObject(segment)) {
-      return `${target}[_key=="${segment._key}"]`
-    }
-
-    if (typeof segment === 'number') {
-      return `${target}[${segment}]`
-    } else if (/^\d+$/.test(segment)) {
-      return `${target}["${segment}"]`
-    }
-
-    if (typeof segment === 'string') {
-      const separator = i === 0 ? '' : '.'
-      return `${target}${separator}${segment}`
-    }
-
-    throw new Error(`Unsupported path segment "${segment}"`)
-  }, '')
-}
-
-function validateKey(key: string, value: any, path: Path): string {
-  if (!keyStartPattern.test(key)) {
-    throw new DiffError('Keys must start with a letter (a-z)', path.concat(key))
-  }
-
-  if (!keyPattern.test(key)) {
-    throw new DiffError('Keys can only contain letters, numbers and underscores', path.concat(key))
-  }
-
-  if (key === '_key') {
-    if (typeof value !== 'string') {
-      throw new DiffError('Keys must be strings', path.concat(key))
-    }
-
-    if (!idPattern.test(value)) {
-      throw new DiffError('Invalid key - use less exotic characters', path.concat(key))
-    }
-  }
-
-  return key
-}
-
-export function validateDocument(item: unknown, path: Path = []): boolean {
-  if (Array.isArray(item)) {
-    return item.every((child, i) => {
-      if (Array.isArray(child)) {
-        throw new DiffError('Multi-dimensional arrays not supported', path.concat(i))
-      }
-
-      return validateDocument(child, path.concat(i))
-    })
-  }
-
-  if (typeof item === 'object' && item !== null) {
-    const obj = item as {[key: string]: any}
-    return Object.keys(obj).every(
-      key => validateKey(key, obj[key], path) && validateDocument(obj[key], path.concat(key))
-    )
-  }
-
-  return true
-}
-
-class DiffError extends Error {
-  public path: Path
-  public serializedPath: string
-
-  constructor(message: string, path: Path) {
-    const serializedPath = pathToString(path)
-    super(`${message} (at '${serializedPath}')`)
-
-    this.path = path
-    this.serializedPath = serializedPath
-  }
 }
 
 function yes(_: any) {

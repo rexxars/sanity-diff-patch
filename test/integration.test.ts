@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import PQueue from 'p-queue'
 import SanityClient from '@sanity/client'
-import {diffPatch} from '../src/diff-patch'
+import {diffPatch} from '../src'
 
 function omitIgnored(obj: {[key: string]: any}): {[key: string]: any} {
   const {_type, _createdAt, _updatedAt, _rev, ...rest} = obj

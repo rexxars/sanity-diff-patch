@@ -1,4 +1,4 @@
-import {diffPatch} from '../src/diff-patch'
+import {diffPatch} from '../src'
 import * as setAndUnset from './fixtures/set-and-unset'
 
 describe('module api', () => {

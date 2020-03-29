@@ -1,4 +1,4 @@
-import {diffPatch, validateDocument} from '../src/diff-patch'
+import {diffPatch, validateDocument} from '../src'
 
 describe('safeguards', () => {
   test('cannot change `_type` at root', () => {

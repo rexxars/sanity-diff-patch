@@ -2,9 +2,9 @@
   "name": "@rexxars/sanity-diff-patch",
   "version": "0.1.0",
   "description": "Generates a set of Sanity patches by comparing two JSON structures",
-  "main": "dist/diff-patch.js",
-  "module": "dist/diff-patch.esm.js",
-  "typings": "dist/diff-patch.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/sanity-diff-patch.esm.js",
+  "typings": "dist/sanity-diff-patch.d.ts",
   "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
   "license": "MIT",
   "files": [

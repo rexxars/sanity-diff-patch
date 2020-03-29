@@ -1,4 +1,4 @@
-import {diffPatch} from '../src/diff-patch'
+import {diffPatch} from '../src'
 import * as simple from './fixtures/simple'
 import * as nested from './fixtures/nested'
 import * as setAndUnset from './fixtures/set-and-unset'
