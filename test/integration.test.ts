@@ -106,11 +106,9 @@ describeIt('integration tests', () => {
         .createOrReplace(input)
         .serialize()
 
-      const transaction = (trx as unknown) as any[] // temporary fix for typing error
-
       const result = await queue.add(() =>
         client
-          .transaction(transaction.concat(diff))
+          .transaction(trx.concat(diff))
           .commit({visibility: 'async', returnDocuments: true, returnFirst: true})
       )
 
