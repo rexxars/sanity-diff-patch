@@ -35,7 +35,7 @@ export function validateKey(key: string, value: any, path: Path): string {
     throw new DiffError('Keys can only contain letters, numbers and underscores', path.concat(key))
   }
 
-  if (key === '_key') {
+  if (key === '_key' || key === '_ref' || key === '_type') {
     if (typeof value !== 'string') {
       throw new DiffError('Keys must be strings', path.concat(key))
     }

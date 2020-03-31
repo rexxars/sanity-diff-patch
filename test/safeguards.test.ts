@@ -155,5 +155,17 @@ describe('safeguards', () => {
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid key - use less exotic characters (at 'author._key')"`
     )
+
+    expect(() => {
+      validateDocument({_id: 'agot', _type: 'book', author: {_ref: '$foo'}})
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"Invalid key - use less exotic characters (at 'author._ref')"`
+    )
+
+    expect(() => {
+      validateDocument({_id: 'agot', _type: 'book', author: {_type: 'some%value'}})
+    }).toThrowErrorMatchingInlineSnapshot(
+      `"Invalid key - use less exotic characters (at 'author._type')"`
+    )
   })
 })
