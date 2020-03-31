@@ -217,7 +217,7 @@ function diffArray(
   // Check for illegal array contents
   for (let i = 0; i < itemB.length; i++) {
     if (Array.isArray(itemB[i])) {
-      throw new DiffError('Multi-dimensional arrays not supported', path.concat(i))
+      throw new DiffError('Multi-dimensional arrays not supported', path.concat(i), itemB[i])
     }
   }
 

@@ -28,20 +28,24 @@ export function validateDocument(item: unknown, path: Path = []): boolean {
 
 export function validateKey(key: string, value: any, path: Path): string {
   if (!keyStartPattern.test(key)) {
-    throw new DiffError('Keys must start with a letter (a-z)', path.concat(key))
+    throw new DiffError('Keys must start with a letter (a-z)', path.concat(key), value)
   }
 
   if (!keyPattern.test(key)) {
-    throw new DiffError('Keys can only contain letters, numbers and underscores', path.concat(key))
+    throw new DiffError(
+      'Keys can only contain letters, numbers and underscores',
+      path.concat(key),
+      value
+    )
   }
 
   if (key === '_key' || key === '_ref' || key === '_type') {
     if (typeof value !== 'string') {
-      throw new DiffError('Keys must be strings', path.concat(key))
+      throw new DiffError('Keys must be strings', path.concat(key), value)
     }
 
     if (!idPattern.test(value)) {
-      throw new DiffError('Invalid key - use less exotic characters', path.concat(key))
+      throw new DiffError('Invalid key - use less exotic characters', path.concat(key), value)
     }
   }
 
