@@ -3,6 +3,7 @@
   "version": "1.0.5",
   "description": "Generates a set of Sanity patches needed to change an item (usually a document) from one shape to another",
   "main": "dist/index.js",
+  "sideEffects": false,
   "module": "dist/sanity-diff-patch.esm.js",
   "typings": "dist/sanity-diff-patch.d.ts",
   "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
