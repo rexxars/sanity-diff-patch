@@ -112,7 +112,7 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts?: Input
   return serializePatches(operations, {id, ifRevisionID: revisionLocked ? ifRevisionID : undefined})
 }
 
-function diffItem(
+export function diffItem(
   itemA: unknown,
   itemB: unknown,
   options: PatchOptions = defaultOptions,
