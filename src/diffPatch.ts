@@ -21,7 +21,7 @@ const ignoredKeys = ['_id', '_type', '_createdAt', '_updatedAt', '_rev']
 type PrimitiveValue = string | number | boolean | null | undefined
 
 export interface KeyedSanityObject {
-  [key: string]: any
+  [key: string]: unknown
   _key: string
 }
 
@@ -33,7 +33,7 @@ interface DocumentStub {
   _rev?: string
   _createdAt?: string
   _updatedAt?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface DiffMatchPatchOptions {
@@ -78,13 +78,16 @@ const defaultOptions: PatchOptions = {
   }
 }
 
-export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts: InputOptions = {}) {
-  const options = {
+function mergeOptions(options: InputOptions) {
+  return {
     ...defaultOptions,
-    ...opts,
-    diffMatchPatch: {...defaultOptions.diffMatchPatch, ...(opts.diffMatchPatch || {})}
+    ...options,
+    diffMatchPatch: {...defaultOptions.diffMatchPatch, ...(options.diffMatchPatch || {})}
   }
+}
 
+export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts?: InputOptions) {
+  const options = opts ? mergeOptions(opts) : defaultOptions
   const id = options.id || (itemA._id === itemB._id && itemA._id)
   const revisionLocked = options.ifRevisionID || options.ifRevisionId
   const ifRevisionID = typeof revisionLocked === 'boolean' ? itemA._rev : revisionLocked
@@ -105,16 +108,16 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts: InputO
     throw new Error(`_type is immutable and cannot be changed (${itemA._type} => ${itemB._type})`)
   }
 
-  const operations = diffItem(itemA, itemB, basePath, [], options)
+  const operations = diffItem(itemA, itemB, options, basePath, [])
   return serializePatches(operations, {id, ifRevisionID: revisionLocked ? ifRevisionID : undefined})
 }
 
 function diffItem(
   itemA: unknown,
   itemB: unknown,
-  path: Path,
-  patches: Patch[],
-  options: PatchOptions
+  options: PatchOptions = defaultOptions,
+  path: Path = [],
+  patches: Patch[] = []
 ) {
   if (itemA === itemB) {
     return patches
@@ -139,7 +142,7 @@ function diffItem(
   const dataType = aIsUndefined ? bType : aType
   const isContainer = dataType === 'object' || dataType === 'array'
   if (!isContainer) {
-    return diffPrimitive(itemA as PrimitiveValue, itemB as PrimitiveValue, path, patches, options)
+    return diffPrimitive(itemA as PrimitiveValue, itemB as PrimitiveValue, options, path, patches)
   }
 
   if (aType !== bType) {
@@ -149,16 +152,16 @@ function diffItem(
   }
 
   return dataType === 'array'
-    ? diffArray(itemA as any[], itemB as any[], path, patches, options)
-    : diffObject(itemA as object, itemB as object, path, patches, options)
+    ? diffArray(itemA as unknown[], itemB as unknown[], options, path, patches)
+    : diffObject(itemA as object, itemB as object, options, path, patches)
 }
 
 function diffObject(
   itemA: SanityObject,
   itemB: SanityObject,
+  options: PatchOptions,
   path: Path,
-  patches: Patch[],
-  options: PatchOptions
+  patches: Patch[]
 ) {
   const atRoot = path.length === 0
   const aKeys = Object.keys(itemA)
@@ -183,18 +186,18 @@ function diffObject(
   // Check for changed items
   for (let i = 0; i < bKeysLength; i++) {
     const key = bKeys[i]
-    diffItem(itemA[key], itemB[key], path.concat([key]), patches, options)
+    diffItem(itemA[key], itemB[key], options, path.concat([key]), patches)
   }
 
   return patches
 }
 
 function diffArray(
-  itemA: any[],
-  itemB: any[],
+  itemA: unknown[],
+  itemB: unknown[],
+  options: PatchOptions,
   path: Path,
-  patches: Patch[],
-  options: PatchOptions
+  patches: Patch[]
 ) {
   // Check for new items
   if (itemB.length > itemA.length) {
@@ -224,26 +227,26 @@ function diffArray(
   const overlapping = Math.min(itemA.length, itemB.length)
   const segmentA = itemA.slice(0, overlapping)
   const segmentB = itemB.slice(0, overlapping)
-  const isKeyed = isUniquelyKeyed(segmentA) && isUniquelyKeyed(segmentB)
-  return isKeyed
-    ? diffArrayByKey(segmentA, segmentB, path, patches, options)
-    : diffArrayByIndex(segmentA, segmentB, path, patches, options)
+
+  return isUniquelyKeyed(segmentA) && isUniquelyKeyed(segmentB)
+    ? diffArrayByKey(segmentA, segmentB, options, path, patches)
+    : diffArrayByIndex(segmentA, segmentB, options, path, patches)
 }
 
 function diffArrayByIndex(
-  itemA: any[],
-  itemB: any[],
+  itemA: unknown[],
+  itemB: unknown[],
+  options: PatchOptions,
   path: Path,
-  patches: Patch[],
-  options: PatchOptions
+  patches: Patch[]
 ) {
   for (let i = 0; i < itemA.length; i++) {
     diffItem(
       itemA[i],
       nullifyUndefined(itemB[i], path, i, options),
+      options,
       path.concat(i),
-      patches,
-      options
+      patches
     )
   }
 
@@ -253,9 +256,9 @@ function diffArrayByIndex(
 function diffArrayByKey(
   itemA: KeyedSanityObject[],
   itemB: KeyedSanityObject[],
+  options: PatchOptions,
   path: Path,
-  patches: Patch[],
-  options: PatchOptions
+  patches: Patch[]
 ) {
   const keyedA = indexByKey(itemA)
   const keyedB = indexByKey(itemB)
@@ -263,14 +266,14 @@ function diffArrayByKey(
   // There's a bunch of hard/semi-hard problems related to using keys
   // Unless we have the exact same order, just use indexes for now
   if (!arrayIsEqual(keyedA.keys, keyedB.keys)) {
-    return diffArrayByIndex(itemA, itemB, path, patches, options)
+    return diffArrayByIndex(itemA, itemB, options, path, patches)
   }
 
   for (let i = 0; i < keyedB.keys.length; i++) {
     const key = keyedB.keys[i]
     const valueA = keyedA.index[key]
     const valueB = nullifyUndefined(keyedB.index[key], path, i, options)
-    diffItem(valueA, valueB, path.concat({_key: key}), patches, options)
+    diffItem(valueA, valueB, options, path.concat({_key: key}), patches)
   }
 
   return patches
@@ -279,8 +282,8 @@ function diffArrayByKey(
 function getDiffMatchPatch(
   itemA: PrimitiveValue,
   itemB: PrimitiveValue,
-  path: Path,
-  options: PatchOptions
+  options: PatchOptions,
+  path: Path
 ): DiffMatchPatch | undefined {
   const {enabled, lengthThresholdRelative, lengthThresholdAbsolute} = options.diffMatchPatch
   const segment = path[path.length - 1]
@@ -319,11 +322,11 @@ function getDiffMatchPatch(
 function diffPrimitive(
   itemA: PrimitiveValue,
   itemB: PrimitiveValue,
+  options: PatchOptions,
   path: Path,
-  patches: Patch[],
-  options: PatchOptions
+  patches: Patch[]
 ): Patch[] {
-  const dmp = getDiffMatchPatch(itemA, itemB, path, options)
+  const dmp = getDiffMatchPatch(itemA, itemB, options, path)
 
   patches.push(
     dmp || {
@@ -401,11 +404,11 @@ function serializePatches(
   }))
 }
 
-function isUniquelyKeyed(arr: any[]): arr is KeyedSanityObject[] {
+function isUniquelyKeyed(arr: unknown[]): arr is KeyedSanityObject[] {
   const keys = []
 
   for (let i = 0; i < arr.length; i++) {
-    const key = arr[i] && arr[i]._key
+    const key = getKey(arr[i])
     if (!key || keys.indexOf(key) !== -1) {
       return false
     }
@@ -414,6 +417,10 @@ function isUniquelyKeyed(arr: any[]): arr is KeyedSanityObject[] {
   }
 
   return true
+}
+
+function getKey(obj: unknown) {
+  return typeof obj === 'object' && obj !== null && (obj as KeyedSanityObject)._key
 }
 
 function indexByKey(arr: KeyedSanityObject[]) {
@@ -427,7 +434,7 @@ function indexByKey(arr: KeyedSanityObject[]) {
   )
 }
 
-function arrayIsEqual(itemA: any[], itemB: any[]) {
+function arrayIsEqual(itemA: unknown[], itemB: unknown[]) {
   return itemA.length === itemB.length && itemA.every((item, i) => itemB[i] === item)
 }
 
@@ -444,6 +451,6 @@ function nullifyUndefined(item: unknown, path: Path, index: number, options: Pat
   return null
 }
 
-function yes(_: any) {
+function yes(_: unknown) {
   return true
 }
