@@ -38,15 +38,15 @@
     "singleQuote": true
   },
   "devDependencies": {
-    "@sanity/client": "^1.149.7",
+    "@sanity/client": "^1.149.16",
     "@types/diff-match-patch": "^1.0.32",
-    "@types/jest": "^25.2.1",
+    "@types/jest": "^26.0.0",
     "eslint-config-prettier": "^6.11.0",
-    "eslint-config-sanity": "^1.149.0",
-    "p-queue": "^6.3.0",
+    "eslint-config-sanity": "^1.149.16",
+    "p-queue": "^6.4.0",
     "tsdx": "^0.13.2",
-    "tslib": "^1.11.1",
-    "typescript": "^3.8.3"
+    "tslib": "^2.0.0",
+    "typescript": "^3.9.5"
   },
   "jest": {
     "testEnvironment": "node"
