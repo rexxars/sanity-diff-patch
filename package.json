@@ -1,6 +1,6 @@
 {
   "name": "sanity-diff-patch",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Generates a set of Sanity patches needed to change an item (usually a document) from one shape to another",
   "main": "dist/index.js",
   "sideEffects": false,
