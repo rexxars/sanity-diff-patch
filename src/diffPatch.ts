@@ -211,10 +211,24 @@ function diffArray(
   // Check for deleted items
   if (itemB.length < itemA.length) {
     const isSingle = itemA.length - itemB.length === 1
-    patches.push({
-      op: 'unset',
-      path: path.concat([isSingle ? itemB.length : [itemB.length, '']])
-    })
+    const unsetItems = itemA.slice(itemB.length)
+
+    // If we're revision locked, we can safely unset ranges (eg 5:<end-of-array>).
+    // Also, if we don't have unique array keys, we can't use any better approach
+    // than array indexes. If we _do_ have unique array keys, we'll want to unset
+    // by key, as this is safer in a realtime, collaborative setting
+    if (isRevisionLocked(options) || !isUniquelyKeyed(unsetItems)) {
+      patches.push({
+        op: 'unset',
+        path: path.concat([isSingle ? itemB.length : [itemB.length, '']])
+      })
+    } else {
+      patches.push(
+        ...unsetItems.map(
+          (item): UnsetPatch => ({op: 'unset', path: path.concat({_key: item._key})})
+        )
+      )
+    }
   }
 
   // Check for illegal array contents
@@ -449,6 +463,10 @@ function nullifyUndefined(item: unknown, path: Path, index: number, options: Pat
   }
 
   return null
+}
+
+function isRevisionLocked(options: PatchOptions): boolean {
+  return Boolean(options.ifRevisionID || options.ifRevisionId)
 }
 
 function yes(_: unknown) {

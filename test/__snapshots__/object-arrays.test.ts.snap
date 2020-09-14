@@ -61,7 +61,8 @@ Array [
     "patch": Object {
       "id": "die-hard-iii",
       "unset": Array [
-        "characters[1:]",
+        "characters[_key==\\"simon\\"]",
+        "characters[_key==\\"zeus\\"]",
       ],
     },
   },
@@ -74,7 +75,7 @@ Array [
     "patch": Object {
       "id": "die-hard-iii",
       "unset": Array [
-        "characters[2]",
+        "characters[_key==\\"zeus\\"]",
       ],
     },
   },
@@ -96,7 +97,7 @@ Array [
     "patch": Object {
       "id": "die-hard-iii",
       "unset": Array [
-        "characters[2]",
+        "characters[_key==\\"zeus\\"]",
       ],
     },
   },

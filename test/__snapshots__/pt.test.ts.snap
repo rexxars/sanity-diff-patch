@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`portable text undo bold change 1`] = `
+Array [
+  Object {
+    "patch": Object {
+      "id": "die-hard-iii",
+      "set": Object {
+        "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"80847f72abfd\\"].text": "La oss begynne med en empty slate.",
+      },
+    },
+  },
+  Object {
+    "patch": Object {
+      "id": "die-hard-iii",
+      "unset": Array [
+        "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"1bda8032e34c\\"]",
+        "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"cb0568a8e746\\"]",
+      ],
+    },
+  },
+]
+`;
