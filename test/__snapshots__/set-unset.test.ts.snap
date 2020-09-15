@@ -14,6 +14,26 @@ Array [
 ]
 `;
 
+exports[`set/unset set + unset, image example 1`] = `
+Array [
+  Object {
+    "patch": Object {
+      "id": "die-hard-iii",
+      "set": Object {
+        "image.asset._ref": "image-b",
+        "image.crop.bottom": 0.1,
+        "image.crop.left": 0.2,
+        "image.crop.right": 0.2,
+        "image.crop.top": 0.1,
+        "image.hotspot.height": 0.75,
+        "image.hotspot.width": 0.75,
+        "image.hotspot.x": 0.48,
+      },
+    },
+  },
+]
+`;
+
 exports[`set/unset set + unset, nested changes 1`] = `
 Array [
   Object {

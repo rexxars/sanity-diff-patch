@@ -2,7 +2,7 @@ import {DiffError} from './diffError'
 import {Path} from './paths'
 
 const idPattern = /^[a-z0-9][a-z0-9_.-]+$/i
-const keyPattern = /^[a-zA-Z_][a-zA-Z0-9_]+$/
+const keyPattern = /^[a-zA-Z_][a-zA-Z0-9_]*$/
 const keyStartPattern = /^[a-z_]/i
 
 export function validateDocument(item: unknown, path: Path = []): boolean {
