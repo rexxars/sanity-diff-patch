@@ -27,7 +27,7 @@ export interface KeyedSanityObject {
 
 export type SanityObject = KeyedSanityObject | Partial<KeyedSanityObject>
 
-interface DocumentStub {
+export interface DocumentStub {
   _id?: string
   _type?: string
   _rev?: string
@@ -36,13 +36,13 @@ interface DocumentStub {
   [key: string]: unknown
 }
 
-interface DiffMatchPatchOptions {
+export interface DiffMatchPatchOptions {
   enabled: boolean
   lengthThresholdAbsolute: number
   lengthThresholdRelative: number
 }
 
-interface PatchOptions {
+export interface PatchOptions {
   id?: string
   basePath?: Path
   ifRevisionID?: string | boolean
@@ -51,7 +51,7 @@ interface PatchOptions {
   diffMatchPatch: DiffMatchPatchOptions
 }
 
-type InputOptions = {
+export type InputOptions = {
   id?: string
   basePath?: Path
   ifRevisionID?: string | boolean
@@ -113,7 +113,7 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts?: Input
 export function diffItem(
   itemA: unknown,
   itemB: unknown,
-  options: PatchOptions = defaultOptions,
+  opts: InputOptions = defaultOptions,
   path: Path = [],
   patches: Patch[] = []
 ) {
@@ -137,6 +137,7 @@ export function diffItem(
     return patches
   }
 
+  const options = mergeOptions(opts)
   const dataType = aIsUndefined ? bType : aType
   const isContainer = dataType === 'object' || dataType === 'array'
   if (!isContainer) {
