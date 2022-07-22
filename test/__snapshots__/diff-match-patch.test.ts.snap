@@ -37,16 +37,8 @@ Array [
 ]
 `;
 
-exports[`diff match patch falls back to regular patch on unicode issues 1`] = `
+exports[`diff match patch handles patching with unicode surrogate pairs 1`] = `
 Array [
-  Object {
-    "patch": Object {
-      "id": "die-hard-ix",
-      "set": Object {
-        "reviews[_key==\\"abc123\\"].text": "Honestly? I thought it was total 😀, really.",
-      },
-    },
-  },
   Object {
     "patch": Object {
       "diffMatchPatch": Object {
@@ -54,6 +46,12 @@ Array [
  tal 
 -xx
 +%3C3
+ , re
+",
+        "reviews[_key==\\"abc123\\"].text": "@@ -30,10 +30,10 @@
+ tal 
+-%F0%9F%98%89
++%F0%9F%98%80
  , re
 ",
       },

@@ -20,26 +20,27 @@
     "compare"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=14.16"
   },
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
+    "prepublishOnly": "tsdx build",
     "coverage": "tsdx test --coverage"
   },
-  "peerDependencies": {},
   "prettier": {
     "semi": false,
     "printWidth": 100,
     "bracketSpacing": false,
     "singleQuote": true
   },
+  "dependencies": {
+    "@sanity/diff-match-patch": "^0.0.7"
+  },
   "devDependencies": {
     "@sanity/client": "^2.13.0",
-    "@types/diff-match-patch": "^1.0.32",
     "@types/jest": "^26.0.24",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-sanity": "^5.1.0",
@@ -50,8 +51,5 @@
   },
   "jest": {
     "testEnvironment": "node"
-  },
-  "dependencies": {
-    "diff-match-patch": "^1.0.5"
   }
 }

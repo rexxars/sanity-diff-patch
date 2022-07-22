@@ -78,7 +78,6 @@ export const typeChangeOut = {
   rating: 'I would give it a solid 9 on a scale from 1 to 26'
 }
 
-// Fall back to regular set patch if failing to diff because of unicode
 export const unicodeChangeIn = {
   ...base,
   ascii: 'Honestly? I thought it was total xx, really.',

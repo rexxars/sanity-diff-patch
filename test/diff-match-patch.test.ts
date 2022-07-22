@@ -22,7 +22,7 @@ describe('diff match patch', () => {
     expect(diffPatch(dmp.typeChangeIn, dmp.typeChangeOut)).toMatchSnapshot()
   })
 
-  test('falls back to regular patch on unicode issues', () => {
+  test('handles patching with unicode surrogate pairs', () => {
     expect(
       diffPatch(dmp.unicodeChangeIn, dmp.unicodeChangeOut, {
         diffMatchPatch: {lengthThresholdAbsolute: 1, lengthThresholdRelative: 3}

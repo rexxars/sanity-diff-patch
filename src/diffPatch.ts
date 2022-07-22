@@ -1,4 +1,4 @@
-import {diff_match_patch as DMP} from 'diff-match-patch'
+import {cleanupEfficiency, makeDiff, makePatches, stringifyPatches} from '@sanity/diff-match-patch'
 import {DiffError} from './diffError'
 import {Path, pathToString} from './paths'
 import {validateKey} from './validate'
@@ -59,8 +59,6 @@ type InputOptions = {
   hideWarnings?: boolean
   diffMatchPatch?: Partial<DiffMatchPatchOptions>
 }
-
-const diff = new DMP()
 
 const defaultOptions: PatchOptions = {
   hideWarnings: false,
@@ -316,9 +314,9 @@ function getDiffMatchPatch(
 
   let strPatch = ''
   try {
-    const patch = diff.diff_main(itemA, itemB)
-    diff.diff_cleanupEfficiency(patch)
-    strPatch = diff.patch_toText(diff.patch_make(patch))
+    const patch = makeDiff(itemA, itemB)
+    const diff = cleanupEfficiency(patch)
+    strPatch = stringifyPatches(makePatches(diff))
   } catch (err) {
     // Fall back to using regular set patch
     return undefined
