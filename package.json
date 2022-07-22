@@ -5,7 +5,15 @@
   "main": "dist/index.js",
   "sideEffects": false,
   "module": "dist/sanity-diff-patch.esm.js",
-  "typings": "dist/sanity-diff-patch.d.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/sanity-diff-patch.esm.js",
+      "require": "./dist/index.js",
+      "default": "./dist/sanity-diff-patch.esm.js"
+    }
+  },
   "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
   "license": "MIT",
   "files": [
