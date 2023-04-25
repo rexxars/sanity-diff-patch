@@ -3,6 +3,7 @@
   "include": ["./src"],
   "exclude": ["**/__tests__/**", "**/*.test.ts"],
   "compilerOptions": {
-    "noEmit": true
+    "outDir": "./dist/types",
+    "rootDir": "."
   }
 }

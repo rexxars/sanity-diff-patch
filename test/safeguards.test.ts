@@ -1,4 +1,5 @@
-import {diffPatch, validateDocument} from '../src'
+import {describe, test, expect} from 'vitest'
+import {diffPatch} from '../src'
 
 describe('safeguards', () => {
   test('throws when attempting to change `_type` at root', () => {
@@ -146,26 +147,6 @@ describe('safeguards', () => {
       )
     }).toThrowErrorMatchingInlineSnapshot(
       `"Invalid key - use less exotic characters (at 'author._key')"`
-    )
-  })
-
-  test('can use validateDocument() for explicit checks', () => {
-    expect(() => {
-      validateDocument({_id: 'agot', _type: 'book', author: {_key: '$', name: 'GRRM'}})
-    }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid key - use less exotic characters (at 'author._key')"`
-    )
-
-    expect(() => {
-      validateDocument({_id: 'agot', _type: 'book', author: {_ref: '$foo'}})
-    }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid key - use less exotic characters (at 'author._ref')"`
-    )
-
-    expect(() => {
-      validateDocument({_id: 'agot', _type: 'book', author: {_type: 'some%value'}})
-    }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid key - use less exotic characters (at 'author._type')"`
     )
   })
 })

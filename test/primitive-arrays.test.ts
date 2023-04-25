@@ -1,3 +1,4 @@
+import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
 import * as primitiveArrayAdd from './fixtures/primitive-array-add'
 import * as primitiveArrayRemove from './fixtures/primitive-array-remove'

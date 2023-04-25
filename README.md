@@ -124,8 +124,8 @@ diffPatch(itemA, itemB, {
     // (targetString * relative). Example: A 100 character target with a relative factor
     // of 1.2 will allow a 120 character diff-match-patch. If larger than this number,
     // it will fall back to a regular `set` patch.
-    lengthThresholdRelative: 1.2
-  }
+    lengthThresholdRelative: 1.2,
+  },
 })
 ```
 

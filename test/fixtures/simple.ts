@@ -5,7 +5,7 @@ export const a = {
   _updatedAt: new Date(Date.now() + 5000).toISOString(),
   _rev: 'datrev',
   title: 'Die Hard 3',
-  rating: 3
+  rating: 3,
 }
 
 export const b = {
@@ -14,5 +14,5 @@ export const b = {
   _createdAt: new Date().toISOString(),
   _updatedAt: new Date().toISOString(),
   title: 'Die Hard with a Vengeance',
-  rating: 4
+  rating: 4,
 }

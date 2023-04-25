@@ -4,8 +4,8 @@ export const a = {
   characters: [
     {_key: 'john', name: 'John McClane'},
     {_key: 'simon', name: 'Simon Gruber'},
-    {_key: 'zeus', name: 'Zeus Carver'}
-  ]
+    {_key: 'zeus', name: 'Zeus Carver'},
+  ],
 }
 
 export const b = {
@@ -14,6 +14,6 @@ export const b = {
   characters: [
     {_key: 'john', name: 'John McClane'},
     {_key: 'simon', name: 'Simon Grüber'},
-    {_key: 'zeus', name: 'Zeus Carver'}
-  ]
+    {_key: 'zeus', name: 'Zeus Carver'},
+  ],
 }

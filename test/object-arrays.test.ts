@@ -1,3 +1,4 @@
+import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
 import * as objectArrayAdd from './fixtures/object-array-add'
 import * as objectArrayRemove from './fixtures/object-array-remove'

@@ -1,32 +1,47 @@
 import {cleanupEfficiency, makeDiff, makePatches, stringifyPatches} from '@sanity/diff-match-patch'
-import {DiffError} from './diffError'
-import {Path, pathToString} from './paths'
-import {validateKey} from './validate'
+import {DiffError} from './diffError.js'
+import {type Path, pathToString} from './paths.js'
+import {validateProperty} from './validate.js'
 import {
-  Patch,
-  SetPatch,
-  UnsetPatch,
-  InsertPatch,
-  DiffMatchPatch,
-  SanityInsertPatch,
-  SanityPatch,
-  SanitySetPatch,
-  SanityUnsetPatch,
-  SanityDiffMatchPatch,
-  SanityPatchMutation
-} from './patches'
+  type Patch,
+  type SetPatch,
+  type UnsetPatch,
+  type InsertAfterPatch,
+  type DiffMatchPatch,
+  type SanityInsertPatch,
+  type SanityPatch,
+  type SanitySetPatch,
+  type SanityUnsetPatch,
+  type SanityDiffMatchPatch,
+  type SanityPatchMutation,
+} from './patches.js'
 
 const ignoredKeys = ['_id', '_type', '_createdAt', '_updatedAt', '_rev']
 
 type PrimitiveValue = string | number | boolean | null | undefined
 
+/**
+ * An object (record) that has a `_key` property
+ *
+ * @internal
+ */
 export interface KeyedSanityObject {
   [key: string]: unknown
   _key: string
 }
 
+/**
+ * An object (record) that _may_ have a `_key` property
+ *
+ * @internal
+ */
 export type SanityObject = KeyedSanityObject | Partial<KeyedSanityObject>
 
+/**
+ * Represents a partial Sanity document (eg a "stub").
+ *
+ * @public
+ */
 export interface DocumentStub {
   _id?: string
   _type?: string
@@ -36,31 +51,87 @@ export interface DocumentStub {
   [key: string]: unknown
 }
 
+/**
+ * Options for the diff-match-patch algorithm.
+ *
+ * @public
+ */
 export interface DiffMatchPatchOptions {
+  /**
+   * Whether or not to use diff-match-patch at all
+   *
+   * @defaultValue `true`
+   */
   enabled: boolean
+
+  /**
+   * Threshold at which to start using diff-match-patch instead of a regular `set` patch.
+   *
+   * @defaultValue `30`
+   */
   lengthThresholdAbsolute: number
+
+  /**
+   * Only use generated diff-match-patch if the patch length is less than or equal to
+   * (targetString * relative). Example: A 100 character target with a relative factor
+   * of 1.2 will allow a 120 character diff-match-patch. If larger than this number,
+   * it will fall back to a regular `set` patch.
+   *
+   * @defaultValue `1.2`
+   */
   lengthThresholdRelative: number
 }
 
+/**
+ * Options for the patch generator
+ *
+ * @public
+ */
 export interface PatchOptions {
+  /**
+   * Document ID to apply the patch to.
+   *
+   * @defaultValue `undefined` - tries to extract `_id` from passed document
+   */
   id?: string
-  basePath?: Path
-  ifRevisionID?: string | boolean
-  ifRevisionId?: string | boolean
-  hideWarnings?: boolean
-  diffMatchPatch: DiffMatchPatchOptions
-}
 
-export type InputOptions = {
-  id?: string
+  /**
+   * Base path to apply the patch to - useful if diffing sub-branches of a document.
+   *
+   * @defaultValue `[]` - eg root of the document
+   */
   basePath?: Path
-  ifRevisionID?: string | boolean
-  ifRevisionId?: string | boolean
+
+  /**
+   * Only apply the patch if the document revision matches this value.
+   * If the property is the boolean value `true`, it will attempt to extract
+   * the revision from the document `_rev` property.
+   *
+   * @defaultValue `undefined` (do not apply revision check)
+   */
+  ifRevisionID?: string | true
+
+  /**
+   * Whether or not to hide warnings during the diff process.
+   *
+   * @defaultValue `false`
+   */
   hideWarnings?: boolean
+
+  /**
+   * Options for the diff-match-patch algorithm.
+   */
   diffMatchPatch?: Partial<DiffMatchPatchOptions>
 }
 
-const defaultOptions: PatchOptions = {
+/**
+ * Options for diff generation, where all DMP properties are required
+ *
+ * @public
+ */
+export type DiffOptions = PatchOptions & {diffMatchPatch: Required<DiffMatchPatchOptions>}
+
+const defaultOptions = {
   hideWarnings: false,
   diffMatchPatch: {
     enabled: true,
@@ -72,22 +143,42 @@ const defaultOptions: PatchOptions = {
     // (targetString * relative). Example: A 100 character target with a relative factor
     // of 1.2 will allow a 120 character diff-match-patch. If larger than this number,
     // it will fall back to a regular `set` patch.
-    lengthThresholdRelative: 1.2
-  }
-}
+    lengthThresholdRelative: 1.2,
+  },
+} satisfies DiffOptions
 
-function mergeOptions(options: InputOptions) {
+/**
+ * Merges the default options with the passed in options.
+ *
+ * @param options - Options to merge with the defaults
+ * @returns Merged options
+ */
+function mergeOptions(options: PatchOptions): DiffOptions {
   return {
     ...defaultOptions,
     ...options,
-    diffMatchPatch: {...defaultOptions.diffMatchPatch, ...(options.diffMatchPatch || {})}
+    diffMatchPatch: {...defaultOptions.diffMatchPatch, ...(options.diffMatchPatch || {})},
   }
 }
 
-export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts?: InputOptions) {
-  const options = opts ? mergeOptions(opts) : defaultOptions
+/**
+ * Generates an array of mutations for Sanity, based on the differences between
+ * the two passed documents/trees.
+ *
+ * @param itemA - The first document/tree to compare
+ * @param itemB - The second document/tree to compare
+ * @param opts - Options for the diff generation
+ * @returns Array of mutations
+ * @public
+ */
+export function diffPatch(
+  itemA: DocumentStub,
+  itemB: DocumentStub,
+  opts?: PatchOptions
+): SanityPatchMutation[] {
+  const options = mergeOptions(opts || {})
   const id = options.id || (itemA._id === itemB._id && itemA._id)
-  const revisionLocked = options.ifRevisionID || options.ifRevisionId
+  const revisionLocked = options.ifRevisionID
   const ifRevisionID = typeof revisionLocked === 'boolean' ? itemA._rev : revisionLocked
   const basePath = options.basePath || []
   if (!id) {
@@ -110,13 +201,25 @@ export function diffPatch(itemA: DocumentStub, itemB: DocumentStub, opts?: Input
   return serializePatches(operations, {id, ifRevisionID: revisionLocked ? ifRevisionID : undefined})
 }
 
+/**
+ * Diffs two items and returns an array of patches.
+ * Note that this is different from `diffPatch`, which generates _mutations_.
+ *
+ * @param itemA - The first item to compare
+ * @param itemB - The second item to compare
+ * @param opts - Options for the diff generation
+ * @param path - Path to the current item
+ * @param patches - Array of patches to append the results to. Note that this is MUTATED.
+ * @returns Array of patches
+ * @public
+ */
 export function diffItem(
   itemA: unknown,
   itemB: unknown,
-  opts: InputOptions = defaultOptions,
+  opts: DiffOptions = defaultOptions,
   path: Path = [],
   patches: Patch[] = []
-) {
+): Patch[] {
   if (itemA === itemB) {
     return patches
   }
@@ -158,19 +261,19 @@ export function diffItem(
 function diffObject(
   itemA: SanityObject,
   itemB: SanityObject,
-  options: PatchOptions,
+  options: DiffOptions,
   path: Path,
   patches: Patch[]
 ) {
   const atRoot = path.length === 0
   const aKeys = Object.keys(itemA)
     .filter(atRoot ? isNotIgnoredKey : yes)
-    .map(key => validateKey(key, itemA[key], path))
+    .map((key) => validateProperty(key, itemA[key], path))
 
   const aKeysLength = aKeys.length
   const bKeys = Object.keys(itemB)
     .filter(atRoot ? isNotIgnoredKey : yes)
-    .map(key => validateKey(key, itemB[key], path))
+    .map((key) => validateProperty(key, itemB[key], path))
 
   const bKeysLength = bKeys.length
 
@@ -194,7 +297,7 @@ function diffObject(
 function diffArray(
   itemA: unknown[],
   itemB: unknown[],
-  options: PatchOptions,
+  options: DiffOptions,
   path: Path,
   patches: Patch[]
 ) {
@@ -203,7 +306,7 @@ function diffArray(
     patches.push({
       op: 'insert',
       after: path.concat([-1]),
-      items: itemB.slice(itemA.length).map((item, i) => nullifyUndefined(item, path, i, options))
+      items: itemB.slice(itemA.length).map((item, i) => nullifyUndefined(item, path, i, options)),
     })
   }
 
@@ -219,7 +322,7 @@ function diffArray(
     if (isRevisionLocked(options) || !isUniquelyKeyed(unsetItems)) {
       patches.push({
         op: 'unset',
-        path: path.concat([isSingle ? itemB.length : [itemB.length, '']])
+        path: path.concat([isSingle ? itemB.length : [itemB.length, '']]),
       })
     } else {
       patches.push(
@@ -249,7 +352,7 @@ function diffArray(
 function diffArrayByIndex(
   itemA: unknown[],
   itemB: unknown[],
-  options: PatchOptions,
+  options: DiffOptions,
   path: Path,
   patches: Patch[]
 ) {
@@ -269,7 +372,7 @@ function diffArrayByIndex(
 function diffArrayByKey(
   itemA: KeyedSanityObject[],
   itemB: KeyedSanityObject[],
-  options: PatchOptions,
+  options: DiffOptions,
   path: Path,
   patches: Patch[]
 ) {
@@ -295,7 +398,7 @@ function diffArrayByKey(
 function getDiffMatchPatch(
   itemA: PrimitiveValue,
   itemB: PrimitiveValue,
-  options: PatchOptions,
+  options: DiffOptions,
   path: Path
 ): DiffMatchPatch | undefined {
   const {enabled, lengthThresholdRelative, lengthThresholdAbsolute} = options.diffMatchPatch
@@ -335,7 +438,7 @@ function getDiffMatchPatch(
 function diffPrimitive(
   itemA: PrimitiveValue,
   itemB: PrimitiveValue,
-  options: PatchOptions,
+  options: DiffOptions,
   path: Path,
   patches: Patch[]
 ): Patch[] {
@@ -345,7 +448,7 @@ function diffPrimitive(
     dmp || {
       op: 'set',
       path,
-      value: itemB
+      value: itemB,
     }
   )
 
@@ -367,7 +470,7 @@ function serializePatches(
   const {id, ifRevisionID} = options
   const set = patches.filter((patch): patch is SetPatch => patch.op === 'set')
   const unset = patches.filter((patch): patch is UnsetPatch => patch.op === 'unset')
-  const insert = patches.filter((patch): patch is InsertPatch => patch.op === 'insert')
+  const insert = patches.filter((patch): patch is InsertAfterPatch => patch.op === 'insert')
   const dmp = patches.filter((patch): patch is DiffMatchPatch => patch.op === 'diffMatchPatch')
 
   const withSet =
@@ -392,7 +495,7 @@ function serializePatches(
       {id, unset: []}
     )
 
-  const withInsert = insert.reduce((acc: SanityInsertPatch[], item: InsertPatch) => {
+  const withInsert = insert.reduce((acc: SanityInsertPatch[], item: InsertAfterPatch) => {
     const after = pathToString(item.after)
     return acc.concat({id, insert: {after, items: item.items}})
   }, [])
@@ -413,7 +516,7 @@ function serializePatches(
   )
 
   return patchSet.map((patch, i) => ({
-    patch: ifRevisionID && i === 0 ? {...patch, ifRevisionID} : patch
+    patch: ifRevisionID && i === 0 ? {...patch, ifRevisionID} : patch,
   }))
 }
 
@@ -465,7 +568,7 @@ function nullifyUndefined(item: unknown, path: Path, index: number, options: Pat
 }
 
 function isRevisionLocked(options: PatchOptions): boolean {
-  return Boolean(options.ifRevisionID || options.ifRevisionId)
+  return Boolean(options.ifRevisionID)
 }
 
 function yes(_: unknown) {

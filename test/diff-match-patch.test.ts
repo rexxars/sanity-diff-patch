@@ -1,3 +1,4 @@
+import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
 import * as dmp from './fixtures/dmp'
 
@@ -25,7 +26,7 @@ describe('diff match patch', () => {
   test('handles patching with unicode surrogate pairs', () => {
     expect(
       diffPatch(dmp.unicodeChangeIn, dmp.unicodeChangeOut, {
-        diffMatchPatch: {lengthThresholdAbsolute: 1, lengthThresholdRelative: 3}
+        diffMatchPatch: {lengthThresholdAbsolute: 1, lengthThresholdRelative: 3},
       })
     ).toMatchSnapshot()
   })

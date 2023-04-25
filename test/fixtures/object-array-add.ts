@@ -1,7 +1,7 @@
 export const a = {
   _id: 'die-hard-iii',
   title: 'Die Hard with a Vengeance',
-  characters: [{_key: 'john', name: 'John McClane'}]
+  characters: [{_key: 'john', name: 'John McClane'}],
 }
 
 export const b = {
@@ -9,8 +9,8 @@ export const b = {
   title: 'Die Hard with a Vengeance',
   characters: [
     {_key: 'john', name: 'John McClane'},
-    {_key: 'simon', name: 'Simon Gruber'}
-  ]
+    {_key: 'simon', name: 'Simon Gruber'},
+  ],
 }
 
 export const c = {
@@ -19,6 +19,6 @@ export const c = {
   characters: [
     {_key: 'john', name: 'John McClane'},
     {_key: 'simon', name: 'Simon Gruber'},
-    {_key: 'zeus', name: 'Zeus Carver'}
-  ]
+    {_key: 'zeus', name: 'Zeus Carver'},
+  ],
 }

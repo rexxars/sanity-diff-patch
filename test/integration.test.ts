@@ -1,8 +1,9 @@
-/* eslint-disable no-sync, import/no-dynamic-require, max-nested-callbacks */
+/* eslint-disable no-sync, max-nested-callbacks */
 import fs from 'fs'
 import path from 'path'
 import PQueue from 'p-queue'
-import SanityClient from '@sanity/client'
+import {createClient} from '@sanity/client'
+import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
 
 function omitIgnored(obj: {[key: string]: any}): {[key: string]: any} {
@@ -12,7 +13,7 @@ function omitIgnored(obj: {[key: string]: any}): {[key: string]: any} {
 
 function nullifyUndefinedArrayItems(item: unknown): unknown {
   if (Array.isArray(item)) {
-    return item.map(child =>
+    return item.map((child) =>
       typeof child === 'undefined' ? null : nullifyUndefinedArrayItems(child)
     )
   }
@@ -35,8 +36,7 @@ const token = process.env.SANITY_TEST_TOKEN || ''
 /* eslint-enable no-process-env */
 
 const queue = new PQueue({concurrency: 4})
-const describeIt = enabled && projectId && dataset && token ? describe : describe.skip
-
+const lacksConfig = !enabled || !projectId || !dataset || !token
 interface FixturePair {
   input: any
   output: any
@@ -56,23 +56,26 @@ interface JsFixture {
   fixture: {[key: string]: any}
 }
 
-describeIt('integration tests', () => {
-  jest.setTimeout(120000)
+describe.skipIf(lacksConfig)(
+  'integration tests',
+  async () => {
+    const client = createClient({projectId: projectId || 'ci', dataset, token, useCdn: false})
+    const fixturesDir = path.join(__dirname, 'fixtures')
+    const jsonFixturesDir = path.join(fixturesDir, 'integration')
 
-  const client = new SanityClient({projectId, dataset, token, useCdn: false})
-  const fixturesDir = path.join(__dirname, 'fixtures')
-  const jsonFixturesDir = path.join(fixturesDir, 'integration')
+    const jsonFixtures: Fixture[] = fs
+      .readdirSync(jsonFixturesDir)
+      .filter((file) => /^\d+\.json$/.test(file))
+      .map((file) => ({file, fixture: readJsonFixture(path.join(jsonFixturesDir, file))}))
 
-  const jsonFixtures: Fixture[] = fs
-    .readdirSync(jsonFixturesDir)
-    .filter(file => /^\d+\.json$/.test(file))
-    .map(file => ({file, fixture: require(path.join(jsonFixturesDir, file))}))
+    const rawJsFixtures: {file: string; fixture: JsFixture}[] = await Promise.all(
+      fs
+        .readdirSync(fixturesDir)
+        .filter((file) => /\.ts$/.test(file))
+        .map(async (file) => ({file, fixture: await readCodeFixture(path.join(fixturesDir, file))}))
+    )
 
-  const jsFixtures: Fixture[] = fs
-    .readdirSync(fixturesDir)
-    .filter(file => /\.ts$/.test(file))
-    .map(file => ({file, fixture: require(path.join(fixturesDir, file))}))
-    .reduce((acc: Fixture[], item: JsFixture) => {
+    const jsFixtures = rawJsFixtures.reduce((acc: Fixture[], item: JsFixture) => {
       const entries = Object.keys(item.fixture)
       return acc.concat(
         entries.reduce((set: Fixture[], key: string) => {
@@ -88,31 +91,46 @@ describeIt('integration tests', () => {
       )
     }, [])
 
-  const fixtures: Fixture[] = [...jsonFixtures, ...jsFixtures]
+    const fixtures: Fixture[] = [...jsonFixtures, ...jsFixtures]
 
-  fixtures.forEach(fix =>
-    test(fix.name || fix.file, async () => {
-      const _type = 'test'
-      const _id = `fix-${fix.name || fix.file}`
-        .replace(/[^a-z0-9-]+/gi, '-')
-        .replace(/(^-|-$)/g, '')
+    fixtures.forEach((fix) =>
+      test(fix.name || fix.file, async () => {
+        const _type = 'test'
+        const _id = `fix-${fix.name || fix.file}`
+          .replace(/[^a-z0-9-]+/gi, '-')
+          .replace(/(^-|-$)/g, '')
 
-      const input = Object.assign({}, fix.fixture.input, {_id, _type})
-      const output = Object.assign({}, fix.fixture.output, {_id, _type})
-      const diff = diffPatch(input, output, {hideWarnings: true})
+        const input = Object.assign({}, fix.fixture.input, {_id, _type})
+        const output = Object.assign({}, fix.fixture.output, {_id, _type})
+        const diff = diffPatch(input, output, {hideWarnings: true})
 
-      const trx = client
-        .transaction()
-        .createOrReplace(input)
-        .serialize()
+        const trx = client.transaction().createOrReplace(input).serialize()
 
-      const result = await queue.add(() =>
-        client
-          .transaction(trx.concat(diff))
-          .commit({visibility: 'async', returnDocuments: true, returnFirst: true})
-      )
+        const result = await queue.add(() =>
+          client
+            .transaction(trx.concat(diff))
+            .commit({visibility: 'async', returnDocuments: true, returnFirst: true})
+        )
 
-      expect(omitIgnored(result)).toEqual(nullifyUndefinedArrayItems(omitIgnored(output)))
-    })
-  )
-})
+        expect(omitIgnored(result)).toEqual(nullifyUndefinedArrayItems(omitIgnored(output)))
+      })
+    )
+  },
+  {
+    timeout: 120000,
+  }
+)
+
+function readJsonFixture(fixturePath: string) {
+  const content = fs.readFileSync(fixturePath, {encoding: 'utf8'})
+  try {
+    return JSON.parse(content)
+  } catch (err) {
+    throw new Error(`Error reading fixture at ${fixturePath}: ${err.message}`)
+  }
+}
+
+function readCodeFixture(fixturePath: string): Promise<JsFixture> {
+  const module = import(fixturePath)
+  return module.then((mod: any) => (mod.default || mod) as JsFixture)
+}

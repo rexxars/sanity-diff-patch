@@ -1,3 +1,4 @@
+import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
 import * as dataTypes from './fixtures/data-types'
 import * as typeChange from './fixtures/type-change'
@@ -14,10 +15,10 @@ describe('diff data types', () => {
             isFeatured: false,
             'characters[0]': 'Simon Gruber',
             'slug.current': 'die-hard-with-a-vengeance',
-            year: 1995
-          }
-        }
-      }
+            year: 1995,
+          },
+        },
+      },
     ])
   })
 
@@ -32,10 +33,10 @@ describe('diff data types', () => {
             rating: {current: 4.24},
             slug: 'die-hard-with-a-vengeance',
             title: ['Die Hard with a Vengeance'],
-            year: {released: 1995}
-          }
-        }
-      }
+            year: {released: 1995},
+          },
+        },
+      },
     ])
   })
 
@@ -44,9 +45,9 @@ describe('diff data types', () => {
       {
         patch: {
           id: dataTypes.a._id,
-          set: {slug: ['die-hard-with-a-vengeance']}
-        }
-      }
+          set: {slug: ['die-hard-with-a-vengeance']},
+        },
+      },
     ])
   })
 
@@ -63,11 +64,11 @@ describe('diff data types', () => {
             number: 1337,
             'object.b12': '12',
             'object.f13': null,
-            string: 'bar'
-          }
-        }
+            string: 'bar',
+          },
+        },
       },
-      {patch: {id: 'abc123', unset: ['unset', 'array[2].two.levels.deep']}}
+      {patch: {id: 'abc123', unset: ['unset', 'array[2].two.levels.deep']}},
     ])
   })
 })

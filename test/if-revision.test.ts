@@ -1,3 +1,4 @@
+import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
 import * as simple from './fixtures/simple'
 
@@ -6,16 +7,8 @@ describe('ifRevisionID', () => {
     expect(diffPatch(simple.a, simple.b, {ifRevisionID: 'abc123'})).toMatchSnapshot()
   })
 
-  test('can apply revision constraint (lowercase)', () => {
-    expect(diffPatch(simple.a, simple.b, {ifRevisionId: 'abc123'})).toMatchSnapshot()
-  })
-
   test('can apply revision constraint (inferred from document)', () => {
     expect(diffPatch(simple.a, simple.b, {ifRevisionID: true})).toMatchSnapshot()
-  })
-
-  test('can set revision constraint to false)', () => {
-    expect(diffPatch(simple.a, simple.b, {ifRevisionID: false})).toMatchSnapshot()
   })
 
   test('throws if revision constraint is `true` but no `_rev` is given', () => {

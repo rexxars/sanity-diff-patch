@@ -6,7 +6,7 @@ export const a = {
   isFeatured: true, // Boolean
   characters: ['John McClane'], // Array
   slug: {current: 'die-hard-iii'}, // Object
-  year: 1994 // Integer
+  year: 1994, // Integer
 }
 
 export const b = {
@@ -17,7 +17,7 @@ export const b = {
   isFeatured: false, // Boolean
   characters: ['Simon Gruber'], // Array
   slug: {current: 'die-hard-with-a-vengeance'}, // Object
-  year: 1995 // Integer
+  year: 1995, // Integer
 }
 
 export const c = {
@@ -28,7 +28,7 @@ export const c = {
   isFeatured: 'yup', // Boolean => String
   characters: {simon: 'Simon Gruber'}, // Array => Object
   slug: 'die-hard-with-a-vengeance', // Object => String
-  year: {released: 1995} // Integer => Object
+  year: {released: 1995}, // Integer => Object
 }
 
 export const d = {
@@ -39,5 +39,5 @@ export const d = {
   isFeatured: true, // Boolean
   characters: ['John McClane'], // Array
   slug: ['die-hard-with-a-vengeance'], // Object => Array
-  year: 1994 // Integer
+  year: 1994, // Integer
 }

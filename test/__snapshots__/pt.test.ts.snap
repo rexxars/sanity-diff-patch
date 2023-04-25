@@ -1,19 +1,19 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`portable text undo bold change 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`portable text > undo bold change 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"80847f72abfd\\"].text": "La oss begynne med en empty slate.",
       },
     },
   },
-  Object {
-    "patch": Object {
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"1bda8032e34c\\"]",
         "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"cb0568a8e746\\"]",
       ],

@@ -2,22 +2,30 @@
   "name": "sanity-diff-patch",
   "version": "2.0.3",
   "description": "Generates a set of Sanity patches needed to change an item (usually a document) from one shape to another",
-  "main": "dist/index.js",
   "sideEffects": false,
-  "module": "dist/sanity-diff-patch.esm.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/sanity-diff-patch.esm.js",
-      "require": "./dist/index.js",
-      "default": "./dist/sanity-diff-patch.esm.js"
-    }
+      "source": "./src/index.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=14.18"
   },
   "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
   "license": "MIT",
   "files": [
     "dist",
+    "!dist/stats.html",
     "src"
   ],
   "keywords": [
@@ -27,16 +35,35 @@
     "mutation",
     "compare"
   ],
-  "engines": {
-    "node": ">=14.16"
-  },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepublishOnly": "tsdx build",
-    "coverage": "tsdx test --coverage"
+    "clean": "rimraf dist coverage",
+    "coverage": "vitest --coverage",
+    "build": "pkg-utils build && pkg-utils --strict",
+    "prebuild": "npm run clean",
+    "lint": "eslint . && tsc --noEmit",
+    "test": "vitest --reporter=verbose",
+    "posttest": "npm run lint",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@sanity/diff-match-patch": "^2.0.0"
+  },
+  "devDependencies": {
+    "@sanity/client": "^5.4.2",
+    "@sanity/pkg-utils": "^2.2.13",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "@vitest/coverage-c8": "^0.30.1",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-sanity": "^6.0.0",
+    "p-queue": "^6.0.0",
+    "prettier": "^2.8.6",
+    "rimraf": "^5.0.0",
+    "rollup-plugin-visualizer": "^5.9.0",
+    "typescript": "^4.9.5",
+    "vite": "^4.3.2",
+    "vitest": "^0.30.1"
   },
   "prettier": {
     "semi": false,
@@ -44,20 +71,18 @@
     "bracketSpacing": false,
     "singleQuote": true
   },
-  "dependencies": {
-    "@sanity/diff-match-patch": "^1.0.0"
-  },
-  "devDependencies": {
-    "@sanity/client": "^2.13.0",
-    "@types/jest": "^26.0.24",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-sanity": "^5.1.0",
-    "p-queue": "^6.0.0",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.5.0",
-    "typescript": "^4.3.5"
-  },
-  "jest": {
-    "testEnvironment": "node"
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 9,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "modules": true
+      }
+    },
+    "extends": [
+      "sanity",
+      "sanity/typescript",
+      "prettier"
+    ]
   }
 }

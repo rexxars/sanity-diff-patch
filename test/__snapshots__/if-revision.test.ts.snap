@@ -1,12 +1,12 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ifRevisionID can apply revision constraint (inferred from document) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`ifRevisionID > can apply revision constraint (inferred from document) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
       "ifRevisionID": "datrev",
-      "set": Object {
+      "set": {
         "rating": 4,
         "title": "Die Hard with a Vengeance",
       },
@@ -15,13 +15,13 @@ Array [
 ]
 `;
 
-exports[`ifRevisionID can apply revision constraint (lowercase) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`ifRevisionID > can apply revision constraint (lowercase) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
       "ifRevisionID": "abc123",
-      "set": Object {
+      "set": {
         "rating": 4,
         "title": "Die Hard with a Vengeance",
       },
@@ -30,13 +30,13 @@ Array [
 ]
 `;
 
-exports[`ifRevisionID can apply revision constraint (uppercase) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`ifRevisionID > can apply revision constraint (uppercase) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
       "ifRevisionID": "abc123",
-      "set": Object {
+      "set": {
         "rating": 4,
         "title": "Die Hard with a Vengeance",
       },
@@ -45,12 +45,12 @@ Array [
 ]
 `;
 
-exports[`ifRevisionID can set revision constraint to false) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`ifRevisionID > can set revision constraint to false) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "rating": 4,
         "title": "Die Hard with a Vengeance",
       },

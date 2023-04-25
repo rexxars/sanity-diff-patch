@@ -1,22 +1,22 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`module api can include ifRevisionID 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`module api > can include ifRevisionID 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
       "ifRevisionID": "foo",
-      "set": Object {
+      "set": {
         "arr[1]": null,
         "slug._type": "slug",
         "slug.current": "die-hard-with-a-vengeance",
       },
     },
   },
-  Object {
-    "patch": Object {
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "year",
         "slug.auto",
       ],
@@ -25,23 +25,23 @@ Array [
 ]
 `;
 
-exports[`module api can include ifRevisionId (lowercase d) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`module api > can include ifRevisionId (lowercase d) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
       "ifRevisionID": "foo",
-      "set": Object {
+      "set": {
         "arr[1]": null,
         "slug._type": "slug",
         "slug.current": "die-hard-with-a-vengeance",
       },
     },
   },
-  Object {
-    "patch": Object {
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "year",
         "slug.auto",
       ],
@@ -50,22 +50,22 @@ Array [
 ]
 `;
 
-exports[`module api can pass different document ID 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`module api > can pass different document ID 1`] = `
+[
+  {
+    "patch": {
       "id": "moop",
-      "set": Object {
+      "set": {
         "arr[1]": null,
         "slug._type": "slug",
         "slug.current": "die-hard-with-a-vengeance",
       },
     },
   },
-  Object {
-    "patch": Object {
+  {
+    "patch": {
       "id": "moop",
-      "unset": Array [
+      "unset": [
         "year",
         "slug.auto",
       ],

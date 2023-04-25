@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`primitive arrays add to end (multiple) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`primitive arrays > add to end (multiple) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "insert": Object {
+      "insert": {
         "after": "characters[-1]",
-        "items": Array [
+        "items": [
           "Simon Gruber",
           "Zeus Carver",
         ],
@@ -17,14 +17,14 @@ Array [
 ]
 `;
 
-exports[`primitive arrays add to end (single) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`primitive arrays > add to end (single) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "insert": Object {
+      "insert": {
         "after": "characters[-1]",
-        "items": Array [
+        "items": [
           "Simon Gruber",
         ],
       },
@@ -33,12 +33,12 @@ Array [
 ]
 `;
 
-exports[`primitive arrays remove from end (multiple) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`primitive arrays > remove from end (multiple) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "characters[1:]",
       ],
     },
@@ -46,12 +46,12 @@ Array [
 ]
 `;
 
-exports[`primitive arrays remove from end (single) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`primitive arrays > remove from end (single) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "characters[2]",
       ],
     },
@@ -59,20 +59,20 @@ Array [
 ]
 `;
 
-exports[`primitive arrays remove from middle (single) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`primitive arrays > remove from middle (single) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "characters[1]": "Zeus Carver",
       },
     },
   },
-  Object {
-    "patch": Object {
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "characters[2]",
       ],
     },

@@ -6,7 +6,7 @@ export const a = {
   bool: true,
   array: ['zero', 1, {two: {levels: {deep: 'value'}}}],
   object: {f13: 13},
-  unset: 'me'
+  unset: 'me',
 }
 
 export const b = {
@@ -16,5 +16,5 @@ export const b = {
   string: 'bar',
   bool: false,
   array: [0, 'one', {two: {levels: {other: 'value'}}}],
-  object: {b12: '12', f13: null}
+  object: {b12: '12', f13: null},
 }

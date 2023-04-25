@@ -1,3 +1,4 @@
+import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
 import * as simple from './fixtures/simple'
 import * as nested from './fixtures/nested'

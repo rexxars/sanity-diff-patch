@@ -1,4 +1,5 @@
-import {diffPatch, validateDocument} from '../src'
+import {describe, test, expect} from 'vitest'
+import {diffPatch} from '../src'
 import {pathToString} from '../src/paths'
 import * as setAndUnset from './fixtures/set-and-unset'
 
@@ -6,12 +7,6 @@ describe('module api', () => {
   test('can include ifRevisionID', () => {
     expect(
       diffPatch(setAndUnset.a, setAndUnset.b, {ifRevisionID: 'foo', hideWarnings: true})
-    ).toMatchSnapshot()
-  })
-
-  test('can include ifRevisionId (lowercase d)', () => {
-    expect(
-      diffPatch(setAndUnset.a, setAndUnset.b, {ifRevisionId: 'foo', hideWarnings: true})
     ).toMatchSnapshot()
   })
 
@@ -37,23 +32,5 @@ describe('module api', () => {
     expect(() =>
       pathToString(['foo', {foo: 'bar'} as any, 'blah'])
     ).toThrowErrorMatchingInlineSnapshot(`"Unsupported path segment \\"[object Object]\\""`)
-  })
-
-  test('validate throws on multidimensional arrays', () => {
-    expect(() => {
-      validateDocument({_id: 'abc123', arr: [['foo', 'bar']]})
-    }).toThrowErrorMatchingInlineSnapshot(`"Multi-dimensional arrays not supported (at 'arr[0]')"`)
-  })
-
-  test('validate does not throw on legal documents', () => {
-    expect(() => {
-      validateDocument({
-        _id: 'abc123',
-        arr: [1, 2, 3],
-        obj: {nested: 'values'},
-        bool: true,
-        number: 1337
-      })
-    }).not.toThrow()
   })
 })

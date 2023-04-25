@@ -1,8 +1,30 @@
-import {KeyedSanityObject} from './diffPatch'
+import type {KeyedSanityObject} from './diffPatch.js'
 
-export type PathSegment = string | number | {_key: string} | [number | '', number | '']
+/**
+ * A segment of a path
+ *
+ * @public
+ */
+export type PathSegment =
+  | string // Property
+  | number // Array index
+  | {_key: string} // Array `_key` lookup
+  | [number | '', number | ''] // From/to array index
+
+/**
+ * An array of path segments representing a path in a document
+ *
+ * @public
+ */
 export type Path = PathSegment[]
 
+/**
+ * Converts an array path to a string path
+ *
+ * @param path - The array path to convert
+ * @returns A stringified path
+ * @internal
+ */
 export function pathToString(path: Path): string {
   return path.reduce((target: string, segment: PathSegment, i: number) => {
     if (Array.isArray(segment)) {
@@ -15,7 +37,7 @@ export function pathToString(path: Path): string {
 
     if (typeof segment === 'number') {
       return `${target}[${segment}]`
-    } else if (/^\d+$/.test(segment)) {
+    } else if (typeof segment === 'string' && /^\d+$/.test(segment)) {
       return `${target}["${segment}"]`
     }
 

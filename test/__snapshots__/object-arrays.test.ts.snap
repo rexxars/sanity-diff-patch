@@ -1,18 +1,18 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`object arrays add to end (multiple) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`object arrays > add to end (multiple) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "insert": Object {
+      "insert": {
         "after": "characters[-1]",
-        "items": Array [
-          Object {
+        "items": [
+          {
             "_key": "simon",
             "name": "Simon Gruber",
           },
-          Object {
+          {
             "_key": "zeus",
             "name": "Zeus Carver",
           },
@@ -23,15 +23,15 @@ Array [
 ]
 `;
 
-exports[`object arrays add to end (single) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`object arrays > add to end (single) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "insert": Object {
+      "insert": {
         "after": "characters[-1]",
-        "items": Array [
-          Object {
+        "items": [
+          {
             "_key": "simon",
             "name": "Simon Gruber",
           },
@@ -42,12 +42,12 @@ Array [
 ]
 `;
 
-exports[`object arrays change item 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`object arrays > change item 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "characters[_key==\\"simon\\"].name": "Simon Grüber",
       },
     },
@@ -55,12 +55,12 @@ Array [
 ]
 `;
 
-exports[`object arrays remove from end (multiple) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`object arrays > remove from end (multiple) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "characters[_key==\\"simon\\"]",
         "characters[_key==\\"zeus\\"]",
       ],
@@ -69,12 +69,12 @@ Array [
 ]
 `;
 
-exports[`object arrays remove from end (single) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`object arrays > remove from end (single) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "characters[_key==\\"zeus\\"]",
       ],
     },
@@ -82,21 +82,21 @@ Array [
 ]
 `;
 
-exports[`object arrays remove from middle (single) 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`object arrays > remove from middle (single) 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "characters[1]._key": "zeus",
         "characters[1].name": "Zeus Carver",
       },
     },
   },
-  Object {
-    "patch": Object {
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "characters[_key==\\"zeus\\"]",
       ],
     },

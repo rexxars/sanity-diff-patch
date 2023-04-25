@@ -1,11 +1,11 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`set/unset basic nested changes 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`set/unset > basic nested changes 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "slug._type": "slug",
         "slug.current": "die-hard-with-a-vengeance",
       },
@@ -14,12 +14,12 @@ Array [
 ]
 `;
 
-exports[`set/unset set + unset, image example 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`set/unset > set + unset, image example 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "image.asset._ref": "image-b",
         "image.crop.bottom": 0.1,
         "image.crop.left": 0.2,
@@ -34,22 +34,22 @@ Array [
 ]
 `;
 
-exports[`set/unset set + unset, nested changes 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`set/unset > set + unset, nested changes 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "arr[1]": null,
         "slug._type": "slug",
         "slug.current": "die-hard-with-a-vengeance",
       },
     },
   },
-  Object {
-    "patch": Object {
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "unset": Array [
+      "unset": [
         "year",
         "slug.auto",
       ],
@@ -58,12 +58,12 @@ Array [
 ]
 `;
 
-exports[`set/unset simple root-level changes 1`] = `
-Array [
-  Object {
-    "patch": Object {
+exports[`set/unset > simple root-level changes 1`] = `
+[
+  {
+    "patch": {
       "id": "die-hard-iii",
-      "set": Object {
+      "set": {
         "rating": 4,
         "title": "Die Hard with a Vengeance",
       },
