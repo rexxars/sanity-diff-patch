@@ -59,7 +59,13 @@ interface JsFixture {
 describe.skipIf(lacksConfig)(
   'integration tests',
   async () => {
-    const client = createClient({projectId: projectId || 'ci', dataset, token, useCdn: false})
+    const client = createClient({
+      projectId: projectId || 'ci',
+      dataset,
+      token,
+      useCdn: false,
+      apiVersion: '2023-04-24',
+    })
     const fixturesDir = path.join(__dirname, 'fixtures')
     const jsonFixturesDir = path.join(fixturesDir, 'integration')
 
