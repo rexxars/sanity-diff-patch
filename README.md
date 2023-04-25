@@ -141,4 +141,4 @@ In addition to these rules, there are certain cases where it will never use diff
 
 ## License
 
-MIT-licensed. See LICENSE.
+MIT © [Espen Hovlandsdal](https://espen.codes/)
