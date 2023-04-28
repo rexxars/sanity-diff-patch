@@ -46,7 +46,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@sanity/diff-match-patch": "^2.1.0"
+    "@sanity/diff-match-patch": "^3.0.0"
   },
   "devDependencies": {
     "@sanity/client": "^5.4.2",
