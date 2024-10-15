@@ -37,7 +37,7 @@ export function pathToString(path: Path): string {
 
     if (typeof segment === 'number') {
       return `${target}[${segment}]`
-    } else if (typeof segment === 'string' && /^\d+$/.test(segment)) {
+    } else if (typeof segment === 'string' && (/^\d+$/.test(segment) || segment.includes('-'))) {
       return `${target}["${segment}"]`
     }
 

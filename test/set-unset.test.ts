@@ -1,9 +1,10 @@
 import {describe, test, expect} from 'vitest'
 import {diffPatch} from '../src'
-import * as simple from './fixtures/simple'
-import * as nested from './fixtures/nested'
+import * as deep from './fixtures/deep'
 import * as image from './fixtures/image'
+import * as nested from './fixtures/nested'
 import * as setAndUnset from './fixtures/set-and-unset'
+import * as simple from './fixtures/simple'
 
 describe('set/unset', () => {
   test('simple root-level changes', () => {
@@ -20,6 +21,10 @@ describe('set/unset', () => {
 
   test('set + unset, image example', () => {
     expect(diffPatch(image.a, image.b, {hideWarnings: true})).toMatchSnapshot()
+  })
+
+  test('deep nested changes', () => {
+    expect(diffPatch(deep.a, deep.b, {hideWarnings: true})).toMatchSnapshot()
   })
 
   test('no diff', () => {

@@ -2,7 +2,7 @@ import {DiffError} from './diffError.js'
 import type {Path} from './paths.js'
 
 const idPattern = /^[a-z0-9][a-z0-9_.-]+$/i
-const propPattern = /^[a-zA-Z_][a-zA-Z0-9_]*$/
+const propPattern = /^[a-zA-Z_][a-zA-Z0-9_-]*$/
 const propStartPattern = /^[a-z_]/i
 
 /**
