@@ -46,12 +46,12 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@sanity/diff-match-patch": "^3.0.0"
+    "@sanity/diff-match-patch": "^3.1.1"
   },
   "devDependencies": {
-    "@sanity/client": "^5.4.2",
+    "@sanity/client": "^6.22.1",
     "@sanity/pkg-utils": "^2.2.13",
-    "@sanity/semantic-release-preset": "^4.0.2",
+    "@sanity/semantic-release-preset": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "@vitest/coverage-c8": "^0.30.1",
@@ -61,8 +61,8 @@
     "p-queue": "^6.0.0",
     "prettier": "^2.8.6",
     "rimraf": "^5.0.0",
-    "rollup-plugin-visualizer": "^5.9.0",
-    "semantic-release": "^21.0.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "semantic-release": "^24.1.2",
     "typescript": "^4.9.5",
     "vite": "^4.3.2",
     "vitest": "^0.30.1"
