@@ -15,41 +15,12 @@ exports[`ifRevisionID > can apply revision constraint (inferred from document) 1
 ]
 `;
 
-exports[`ifRevisionID > can apply revision constraint (lowercase) 1`] = `
-[
-  {
-    "patch": {
-      "id": "die-hard-iii",
-      "ifRevisionID": "abc123",
-      "set": {
-        "rating": 4,
-        "title": "Die Hard with a Vengeance",
-      },
-    },
-  },
-]
-`;
-
 exports[`ifRevisionID > can apply revision constraint (uppercase) 1`] = `
 [
   {
     "patch": {
       "id": "die-hard-iii",
       "ifRevisionID": "abc123",
-      "set": {
-        "rating": 4,
-        "title": "Die Hard with a Vengeance",
-      },
-    },
-  },
-]
-`;
-
-exports[`ifRevisionID > can set revision constraint to false) 1`] = `
-[
-  {
-    "patch": {
-      "id": "die-hard-iii",
       "set": {
         "rating": 4,
         "title": "Die Hard with a Vengeance",
