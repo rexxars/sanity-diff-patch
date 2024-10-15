@@ -31,6 +31,11 @@ jobs:
       matrix:
         node: [18, 20, 22]
     name: test (node ${{ matrix.node }})
+    env:
+      ENABLE_INTEGRATION_TESTS: '1'
+      SANITY_TEST_PROJECT_ID: ${{ vars.SANITY_TEST_PROJECT_ID }}
+      SANITY_TEST_DATASET: ${{ vars.SANITY_TEST_DATASET }}
+      SANITY_TEST_TOKEN: ${{ secrets.SANITY_TEST_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
