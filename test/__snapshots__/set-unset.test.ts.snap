@@ -19,18 +19,18 @@ exports[`set/unset > deep nested changes 1`] = `
   {
     "patch": {
       "id": "die-hard-iii",
-      "set": {
-        "products[_key==\\"item-1\\"].comparisonFields['support-level']": "advanced",
-        "products[_key==\\"item-1\\"].variants[_key==\\"variant-1\\"]['lace-type']": "slick",
-      },
+      "unset": [
+        "products[_key==\\"item-1\\"].variants[_key==\\"variant-2\\"]['lace-type']",
+      ],
     },
   },
   {
     "patch": {
       "id": "die-hard-iii",
-      "unset": [
-        "products[_key==\\"item-1\\"].variants[_key==\\"variant-2\\"]['lace-type']",
-      ],
+      "set": {
+        "products[_key==\\"item-1\\"].comparisonFields['support-level']": "advanced",
+        "products[_key==\\"item-1\\"].variants[_key==\\"variant-1\\"]['lace-type']": "slick",
+      },
     },
   },
 ]
@@ -61,20 +61,20 @@ exports[`set/unset > set + unset, nested changes 1`] = `
   {
     "patch": {
       "id": "die-hard-iii",
-      "set": {
-        "arr[1]": null,
-        "slug._type": "slug",
-        "slug.current": "die-hard-with-a-vengeance",
-      },
+      "unset": [
+        "year",
+        "slug.auto",
+      ],
     },
   },
   {
     "patch": {
       "id": "die-hard-iii",
-      "unset": [
-        "year",
-        "slug.auto",
-      ],
+      "set": {
+        "arr[1]": null,
+        "slug._type": "slug",
+        "slug.current": "die-hard-with-a-vengeance",
+      },
     },
   },
 ]

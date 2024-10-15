@@ -7,6 +7,7 @@ export const a = {
     asset: {
       _type: 'reference',
       _ref: 'image-a',
+      _weak: true,
     },
     hotspot: {
       height: 1,
@@ -32,6 +33,7 @@ export const b = {
     asset: {
       _type: 'reference',
       _ref: 'image-b',
+      _weak: true,
     },
     hotspot: {
       height: 0.75,

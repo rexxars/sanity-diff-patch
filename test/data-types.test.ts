@@ -53,6 +53,7 @@ describe('diff data types', () => {
 
   test('type changes', () => {
     expect(diffPatch(typeChange.a, typeChange.b)).toEqual([
+      {patch: {id: 'abc123', unset: ['unset', 'array[2].two.levels.deep']}},
       {
         patch: {
           id: 'abc123',
@@ -68,7 +69,6 @@ describe('diff data types', () => {
           },
         },
       },
-      {patch: {id: 'abc123', unset: ['unset', 'array[2].two.levels.deep']}},
     ])
   })
 })

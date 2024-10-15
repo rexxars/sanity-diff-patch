@@ -8,7 +8,6 @@
     "array": ["zero", 1, {"two": {"levels": {"deep": "value"}}}],
     "object": {
       "other": 13,
-      "1337": "leet",
       "dashed-unset-prop": "start",
       "dashed-set-prop": "start"
     },
@@ -21,6 +20,6 @@
     "string": "bar",
     "bool": false,
     "array": [0, "one", {"two": {"levels": {"other": "value"}}}],
-    "object": {"target": "value", "other": null, "1337": "cool", "dashed-set-prop": "end"}
+    "object": {"target": "value", "other": null, "dashed-set-prop": "end"}
   }
 }

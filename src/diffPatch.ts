@@ -511,7 +511,7 @@ function serializePatches(
       {id, diffMatchPatch: {}}
     )
 
-  const patchSet: SanityPatch[] = [withSet, withUnset, withDmp, ...withInsert].filter(
+  const patchSet: SanityPatch[] = [withUnset, withSet, withDmp, ...withInsert].filter(
     (item): item is SanityPatch => item !== false
   )
 

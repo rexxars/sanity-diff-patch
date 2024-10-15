@@ -87,18 +87,18 @@ exports[`object arrays > remove from middle (single) 1`] = `
   {
     "patch": {
       "id": "die-hard-iii",
-      "set": {
-        "characters[1]._key": "zeus",
-        "characters[1].name": "Zeus Carver",
-      },
+      "unset": [
+        "characters[_key==\\"zeus\\"]",
+      ],
     },
   },
   {
     "patch": {
       "id": "die-hard-iii",
-      "unset": [
-        "characters[_key==\\"zeus\\"]",
-      ],
+      "set": {
+        "characters[1]._key": "zeus",
+        "characters[1].name": "Zeus Carver",
+      },
     },
   },
 ]

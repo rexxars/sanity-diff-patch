@@ -6,20 +6,20 @@ exports[`module api > can include ifRevisionID 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "ifRevisionID": "foo",
-      "set": {
-        "arr[1]": null,
-        "slug._type": "slug",
-        "slug.current": "die-hard-with-a-vengeance",
-      },
+      "unset": [
+        "year",
+        "slug.auto",
+      ],
     },
   },
   {
     "patch": {
       "id": "die-hard-iii",
-      "unset": [
-        "year",
-        "slug.auto",
-      ],
+      "set": {
+        "arr[1]": null,
+        "slug._type": "slug",
+        "slug.current": "die-hard-with-a-vengeance",
+      },
     },
   },
 ]
@@ -30,20 +30,20 @@ exports[`module api > can pass different document ID 1`] = `
   {
     "patch": {
       "id": "moop",
-      "set": {
-        "arr[1]": null,
-        "slug._type": "slug",
-        "slug.current": "die-hard-with-a-vengeance",
-      },
+      "unset": [
+        "year",
+        "slug.auto",
+      ],
     },
   },
   {
     "patch": {
       "id": "moop",
-      "unset": [
-        "year",
-        "slug.auto",
-      ],
+      "set": {
+        "arr[1]": null,
+        "slug._type": "slug",
+        "slug.current": "die-hard-with-a-vengeance",
+      },
     },
   },
 ]

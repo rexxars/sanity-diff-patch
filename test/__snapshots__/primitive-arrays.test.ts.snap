@@ -64,17 +64,17 @@ exports[`primitive arrays > remove from middle (single) 1`] = `
   {
     "patch": {
       "id": "die-hard-iii",
-      "set": {
-        "characters[1]": "Zeus Carver",
-      },
+      "unset": [
+        "characters[2]",
+      ],
     },
   },
   {
     "patch": {
       "id": "die-hard-iii",
-      "unset": [
-        "characters[2]",
-      ],
+      "set": {
+        "characters[1]": "Zeus Carver",
+      },
     },
   },
 ]

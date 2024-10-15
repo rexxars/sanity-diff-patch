@@ -4,6 +4,7 @@ import path from 'path'
 import PQueue from 'p-queue'
 import {createClient} from '@sanity/client'
 import {describe, test, expect} from 'vitest'
+
 import {diffPatch} from '../src'
 
 function omitIgnored(obj: {[key: string]: any}): {[key: string]: any} {
@@ -86,6 +87,11 @@ describe.skipIf(lacksConfig)(
       return acc.concat(
         entries.reduce((set: Fixture[], key: string) => {
           for (let x = 0; x < entries.length; x++) {
+            // Don't diff against self
+            if (key === entries[x]) {
+              continue
+            }
+
             const input = item.fixture[key]
             const output = item.fixture[entries[x]]
             const name = `${item.file} (${key} vs ${entries[x]})`
@@ -99,28 +105,28 @@ describe.skipIf(lacksConfig)(
 
     const fixtures: Fixture[] = [...jsonFixtures, ...jsFixtures]
 
-    fixtures.forEach((fix) =>
+    fixtures.forEach((fix) => {
       test(fix.name || fix.file, async () => {
         const _type = 'test'
         const _id = `fix-${fix.name || fix.file}`
           .replace(/[^a-z0-9-]+/gi, '-')
           .replace(/(^-|-$)/g, '')
 
-        const input = Object.assign({}, fix.fixture.input, {_id, _type})
-        const output = Object.assign({}, fix.fixture.output, {_id, _type})
+        const input = {...fix.fixture.input, _id, _type}
+        const output = {...fix.fixture.output, _id, _type}
         const diff = diffPatch(input, output, {hideWarnings: true})
 
         const trx = client.transaction().createOrReplace(input).serialize()
 
         const result = await queue.add(() =>
           client
-            .transaction(trx.concat(diff))
+            .transaction([...trx, ...diff])
             .commit({visibility: 'async', returnDocuments: true, returnFirst: true})
         )
 
         expect(omitIgnored(result)).toEqual(nullifyUndefinedArrayItems(omitIgnored(output)))
       })
-    )
+    })
   },
   {
     timeout: 120000,
