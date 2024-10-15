@@ -5,6 +5,17 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/rexxars/sanity-diff-patch/compare/v3.0.4...v4.0.0) (2024-10-15)
+
+### ⚠ BREAKING CHANGES
+
+- We now require node 18 or higher to run this module
+
+### Bug Fixes
+
+- apply unset operations first ([692f5d6](https://github.com/rexxars/sanity-diff-patch/commit/692f5d6b6584f1fb2fb449273922d846ecbd2e34))
+- require node 18.2 or higher ([dc2437b](https://github.com/rexxars/sanity-diff-patch/commit/dc2437b3a8031f7cbbd10ccb3bc72a9a735ee98f))
+
 ## [3.0.4](https://github.com/rexxars/sanity-diff-patch/compare/v3.0.3...v3.0.4) (2024-10-15)
 
 ### Bug Fixes
