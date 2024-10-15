@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.3](https://github.com/rexxars/sanity-diff-patch/compare/v3.0.2...v3.0.3) (2024-10-15)
+
+### Bug Fixes
+
+- allow (non-leading) dashes in properties ([bce4d2f](https://github.com/rexxars/sanity-diff-patch/commit/bce4d2f767faf7f2d8ba2705372dd8241f6364f1)), closes [#28](https://github.com/rexxars/sanity-diff-patch/issues/28)
+
 ## [3.0.2](https://github.com/rexxars/sanity-diff-patch/compare/v3.0.1...v3.0.2) (2023-04-28)
 
 ### Bug Fixes
