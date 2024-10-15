@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [14, 16, 18, 20]
+        node: [18, 20, 22]
     name: test (node ${{ matrix.node }})
     steps:
       - uses: actions/checkout@v3
