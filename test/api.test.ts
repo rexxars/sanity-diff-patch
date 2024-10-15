@@ -31,6 +31,6 @@ describe('module api', () => {
   test('pathToString throws on invalid path segments', () => {
     expect(() =>
       pathToString(['foo', {foo: 'bar'} as any, 'blah'])
-    ).toThrowErrorMatchingInlineSnapshot(`"Unsupported path segment \\"[object Object]\\""`)
+    ).toThrowErrorMatchingInlineSnapshot(`[Error: Unsupported path segment "[object Object]"]`)
   })
 })

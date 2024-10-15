@@ -6,7 +6,7 @@ describe('safeguards', () => {
     expect(() => {
       diffPatch({_id: 'foo', _type: 'bar'}, {_id: 'foo', _type: 'bar2'})
     }).toThrowErrorMatchingInlineSnapshot(
-      `"_type is immutable and cannot be changed (bar => bar2)"`
+      `[Error: _type is immutable and cannot be changed (bar => bar2)]`
     )
   })
 
@@ -36,7 +36,7 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', title: 'A Game of Thrones', categories: [['foo']]}
       )
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Multi-dimensional arrays not supported (at 'categories[0]')"`
+      `[Error: Multi-dimensional arrays not supported (at 'categories[0]')]`
     )
   })
 
@@ -46,7 +46,7 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', '13': 'value'},
         {_id: 'agot', _type: 'book', '13': 'changed'}
       )
-    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\'13\']\')"')
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Keys must start with a letter (a-z) (at '['13']')]`)
 
     expect(() => {
       diffPatch(
@@ -54,7 +54,7 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', nested: {'13': 'changed'}}
       )
     }).toThrowErrorMatchingInlineSnapshot(
-      '"Keys must start with a letter (a-z) (at \'nested[\'13\']\')"'
+      `[Error: Keys must start with a letter (a-z) (at 'nested['13']')]`
     )
   })
 
@@ -62,25 +62,25 @@ describe('safeguards', () => {
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', 'feeling💩today': true}, {_id: 'agot', _type: 'book'})
     }).toThrowErrorMatchingInlineSnapshot(
-      '"Keys can only contain letters, numbers and underscores (at \'[\'feeling💩today\']\')"'
+      `[Error: Keys can only contain letters, numbers and underscores (at '['feeling💩today']')]`
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', 'feeling💩today': true})
     }).toThrowErrorMatchingInlineSnapshot(
-      '"Keys can only contain letters, numbers and underscores (at \'[\'feeling💩today\']\')"'
+      `[Error: Keys can only contain letters, numbers and underscores (at '['feeling💩today']')]`
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', "it's a good day": true}, {_id: 'agot', _type: 'book'})
     }).toThrowErrorMatchingInlineSnapshot(
-      '"Keys can only contain letters, numbers and underscores (at \'[\'it\'s a good day\']\')"'
+      `[Error: Keys can only contain letters, numbers and underscores (at '['it's a good day']')]`
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', "it's a good day": true})
     }).toThrowErrorMatchingInlineSnapshot(
-      '"Keys can only contain letters, numbers and underscores (at \'[\'it\'s a good day\']\')"'
+      `[Error: Keys can only contain letters, numbers and underscores (at '['it's a good day']')]`
     )
   })
 
@@ -88,30 +88,30 @@ describe('safeguards', () => {
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', 'foo bar': true}, {_id: 'agot', _type: 'book'})
     }).toThrowErrorMatchingInlineSnapshot(
-      '"Keys can only contain letters, numbers and underscores (at \'[\'foo bar\']\')"'
+      `[Error: Keys can only contain letters, numbers and underscores (at '['foo bar']')]`
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', 'foo bar': true})
     }).toThrowErrorMatchingInlineSnapshot(
-      '"Keys can only contain letters, numbers and underscores (at \'[\'foo bar\']\')"'
+      `[Error: Keys can only contain letters, numbers and underscores (at '['foo bar']')]`
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', ' ': true}, {_id: 'agot', _type: 'book'})
-    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\' \']\')"')
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Keys must start with a letter (a-z) (at '[' ']')]`)
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', ' ': true})
-    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\' \']\')"')
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Keys must start with a letter (a-z) (at '[' ']')]`)
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', '': true}, {_id: 'agot', _type: 'book'})
-    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\'\']\')"')
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Keys must start with a letter (a-z) (at '['']')]`)
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', '': true})
-    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\'\']\')"')
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Keys must start with a letter (a-z) (at '['']')]`)
   })
 
   test('object `_key` must be strings', () => {
@@ -120,14 +120,14 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', author: {_key: 13, name: 'GRRM'}},
         {_id: 'agot', _type: 'book', author: {_key: 'abc', name: 'GRRM'}}
       )
-    }).toThrowErrorMatchingInlineSnapshot(`"Keys must be strings (at 'author._key')"`)
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Keys must be strings (at 'author._key')]`)
 
     expect(() => {
       diffPatch(
         {_id: 'agot', _type: 'book', author: {_key: 'abc', name: 'GRRM'}},
         {_id: 'agot', _type: 'book', author: {_key: 13, name: 'GRRM'}}
       )
-    }).toThrowErrorMatchingInlineSnapshot(`"Keys must be strings (at 'author._key')"`)
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Keys must be strings (at 'author._key')]`)
   })
 
   test('object `_key` must be identifiers', () => {
@@ -137,7 +137,7 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', author: {_key: 'foo', name: 'GRRM'}}
       )
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid key - use less exotic characters (at 'author._key')"`
+      `[Error: Invalid key - use less exotic characters (at 'author._key')]`
     )
 
     expect(() => {
@@ -146,7 +146,7 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', author: {_key: '$', name: 'GRRM'}}
       )
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid key - use less exotic characters (at 'author._key')"`
+      `[Error: Invalid key - use less exotic characters (at 'author._key')]`
     )
   })
 })

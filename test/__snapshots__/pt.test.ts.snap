@@ -6,8 +6,8 @@ exports[`portable text > undo bold change 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "unset": [
-        "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"1bda8032e34c\\"]",
-        "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"cb0568a8e746\\"]",
+        "portableText[_key=="920ebbba9ada"].children[_key=="1bda8032e34c"]",
+        "portableText[_key=="920ebbba9ada"].children[_key=="cb0568a8e746"]",
       ],
     },
   },
@@ -15,7 +15,7 @@ exports[`portable text > undo bold change 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "set": {
-        "portableText[_key==\\"920ebbba9ada\\"].children[_key==\\"80847f72abfd\\"].text": "La oss begynne med en empty slate.",
+        "portableText[_key=="920ebbba9ada"].children[_key=="80847f72abfd"].text": "La oss begynne med en empty slate.",
       },
     },
   },

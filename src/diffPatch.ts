@@ -429,7 +429,6 @@ function getDiffMatchPatch(
   // Don't use patch if it's longer than allowed relative threshold.
   // Allow a 120 character patch for a 100 character string,
   // but don't allow a 800 character patch for a 500 character value.
-  //console.log('%s:\n patch is %d, string is %d', itemB, strPatch.length, itemB.length)
   return strPatch.length > itemB.length * lengthThresholdRelative
     ? undefined
     : {op: 'diffMatchPatch', path, value: strPatch}

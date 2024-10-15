@@ -20,7 +20,7 @@ exports[`set/unset > deep nested changes 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "unset": [
-        "products[_key==\\"item-1\\"].variants[_key==\\"variant-2\\"]['lace-type']",
+        "products[_key=="item-1"].variants[_key=="variant-2"]['lace-type']",
       ],
     },
   },
@@ -28,8 +28,8 @@ exports[`set/unset > deep nested changes 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "set": {
-        "products[_key==\\"item-1\\"].comparisonFields['support-level']": "advanced",
-        "products[_key==\\"item-1\\"].variants[_key==\\"variant-1\\"]['lace-type']": "slick",
+        "products[_key=="item-1"].comparisonFields['support-level']": "advanced",
+        "products[_key=="item-1"].variants[_key=="variant-1"]['lace-type']": "slick",
       },
     },
   },

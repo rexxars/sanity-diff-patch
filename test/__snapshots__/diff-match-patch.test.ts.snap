@@ -6,7 +6,7 @@ exports[`diff match patch > does not use dmp for "privates" (underscore-prefixed
     "patch": {
       "id": "die-hard-ix",
       "set": {
-        "reviews[_key==\\"abc123\\"]._type": "reviewFromUserRepresentingMovieOrNovelOrSomethingVeryLongThatCanBeShownAsStars",
+        "reviews[_key=="abc123"]._type": "reviewFromUserRepresentingMovieOrNovelOrSomethingVeryLongThatCanBeShownAsStars",
       },
     },
   },
@@ -48,7 +48,7 @@ exports[`diff match patch > handles patching with unicode surrogate pairs 1`] = 
 +%3C3
  , re
 ",
-        "reviews[_key==\\"abc123\\"].text": "@@ -30,15 +30,15 @@
+        "reviews[_key=="abc123"].text": "@@ -30,15 +30,15 @@
  tal 
 -%F0%9F%98%89
 +%F0%9F%98%80
@@ -79,7 +79,7 @@ exports[`diff match patch > respects relative length threshold (allowed) 1`] = `
   {
     "patch": {
       "diffMatchPatch": {
-        "reviews[_key==\\"abc123\\"].text": "@@ -27,13 +27,12 @@
+        "reviews[_key=="abc123"].text": "@@ -27,13 +27,12 @@
  an #
 -7 - i
 +8! I
@@ -98,7 +98,7 @@ exports[`diff match patch > respects relative length threshold 1`] = `
     "patch": {
       "id": "die-hard-ix",
       "set": {
-        "synopsis": "When a sack of coffee explodes at the Ultra Gnoch asteroid, a man calling himself \\"Ziltoid\\" phones Major Case Unit Inspector Mark Cimino at the Tellus police station and claims responsibility for the sack. He orders suspended police officer Lt. John McClane to travel to the asteroid, in his underwear. McClane is flown there by Cimino and three other officers. Ultra Gnoch miner Dave Young spots McClane and tries to get him off the asteroid before the coffee bugs infiltrate the asteroid, but a gang of underpant gnomes attacks McClane and Young, who barely escape.",
+        "synopsis": "When a sack of coffee explodes at the Ultra Gnoch asteroid, a man calling himself "Ziltoid" phones Major Case Unit Inspector Mark Cimino at the Tellus police station and claims responsibility for the sack. He orders suspended police officer Lt. John McClane to travel to the asteroid, in his underwear. McClane is flown there by Cimino and three other officers. Ultra Gnoch miner Dave Young spots McClane and tries to get him off the asteroid before the coffee bugs infiltrate the asteroid, but a gang of underpant gnomes attacks McClane and Young, who barely escape.",
       },
     },
   },

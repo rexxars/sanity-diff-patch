@@ -48,7 +48,7 @@ exports[`object arrays > change item 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "set": {
-        "characters[_key==\\"simon\\"].name": "Simon Grüber",
+        "characters[_key=="simon"].name": "Simon Grüber",
       },
     },
   },
@@ -61,8 +61,8 @@ exports[`object arrays > remove from end (multiple) 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "unset": [
-        "characters[_key==\\"simon\\"]",
-        "characters[_key==\\"zeus\\"]",
+        "characters[_key=="simon"]",
+        "characters[_key=="zeus"]",
       ],
     },
   },
@@ -75,7 +75,7 @@ exports[`object arrays > remove from end (single) 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "unset": [
-        "characters[_key==\\"zeus\\"]",
+        "characters[_key=="zeus"]",
       ],
     },
   },
@@ -88,7 +88,7 @@ exports[`object arrays > remove from middle (single) 1`] = `
     "patch": {
       "id": "die-hard-iii",
       "unset": [
-        "characters[_key==\\"zeus\\"]",
+        "characters[_key=="zeus"]",
       ],
     },
   },

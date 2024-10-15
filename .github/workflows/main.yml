@@ -38,12 +38,13 @@ jobs:
       SANITY_TEST_TOKEN: ${{ secrets.SANITY_TEST_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: npm
-      - run: npm ci
-      - run: npm test
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm test
 
   release:
     needs: [test]
@@ -56,11 +57,12 @@ jobs:
           # Need to fetch entire commit history to
           # analyze every commit since last release
           fetch-depth: 0
+      - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm install
         # Branches that will release new versions are defined in .releaserc.json
       - run: npx semantic-release
         # Don't allow interrupting the release step if the job is cancelled, as it can lead to an inconsistent state
