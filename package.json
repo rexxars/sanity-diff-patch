@@ -19,7 +19,7 @@
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=14.18"
+    "node": ">=18"
   },
   "author": "Espen Hovlandsdal <espen@hovlandsdal.com>",
   "license": "MIT",
