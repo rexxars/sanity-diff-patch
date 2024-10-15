@@ -46,7 +46,7 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', '13': 'value'},
         {_id: 'agot', _type: 'book', '13': 'changed'}
       )
-    }).toThrowErrorMatchingInlineSnapshot(`"Keys must start with a letter (a-z) (at '[\\"13\\"]')"`)
+    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\'13\']\')"')
 
     expect(() => {
       diffPatch(
@@ -54,7 +54,7 @@ describe('safeguards', () => {
         {_id: 'agot', _type: 'book', nested: {'13': 'changed'}}
       )
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Keys must start with a letter (a-z) (at 'nested[\\"13\\"]')"`
+      '"Keys must start with a letter (a-z) (at \'nested[\'13\']\')"'
     )
   })
 
@@ -62,25 +62,25 @@ describe('safeguards', () => {
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', 'feeling💩today': true}, {_id: 'agot', _type: 'book'})
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Keys can only contain letters, numbers and underscores (at 'feeling💩today')"`
+      '"Keys can only contain letters, numbers and underscores (at \'[\'feeling💩today\']\')"'
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', 'feeling💩today': true})
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Keys can only contain letters, numbers and underscores (at 'feeling💩today')"`
+      '"Keys can only contain letters, numbers and underscores (at \'[\'feeling💩today\']\')"'
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', "it's a good day": true}, {_id: 'agot', _type: 'book'})
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Keys can only contain letters, numbers and underscores (at 'it's a good day')"`
+      '"Keys can only contain letters, numbers and underscores (at \'[\'it\'s a good day\']\')"'
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', "it's a good day": true})
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Keys can only contain letters, numbers and underscores (at 'it's a good day')"`
+      '"Keys can only contain letters, numbers and underscores (at \'[\'it\'s a good day\']\')"'
     )
   })
 
@@ -88,30 +88,30 @@ describe('safeguards', () => {
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', 'foo bar': true}, {_id: 'agot', _type: 'book'})
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Keys can only contain letters, numbers and underscores (at 'foo bar')"`
+      '"Keys can only contain letters, numbers and underscores (at \'[\'foo bar\']\')"'
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', 'foo bar': true})
     }).toThrowErrorMatchingInlineSnapshot(
-      `"Keys can only contain letters, numbers and underscores (at 'foo bar')"`
+      '"Keys can only contain letters, numbers and underscores (at \'[\'foo bar\']\')"'
     )
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', ' ': true}, {_id: 'agot', _type: 'book'})
-    }).toThrowErrorMatchingInlineSnapshot(`"Keys must start with a letter (a-z) (at ' ')"`)
+    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\' \']\')"')
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', ' ': true})
-    }).toThrowErrorMatchingInlineSnapshot(`"Keys must start with a letter (a-z) (at ' ')"`)
+    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\' \']\')"')
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book', '': true}, {_id: 'agot', _type: 'book'})
-    }).toThrowErrorMatchingInlineSnapshot(`"Keys must start with a letter (a-z) (at '')"`)
+    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\'\']\')"')
 
     expect(() => {
       diffPatch({_id: 'agot', _type: 'book'}, {_id: 'agot', _type: 'book', '': true})
-    }).toThrowErrorMatchingInlineSnapshot(`"Keys must start with a letter (a-z) (at '')"`)
+    }).toThrowErrorMatchingInlineSnapshot('"Keys must start with a letter (a-z) (at \'[\'\']\')"')
   })
 
   test('object `_key` must be strings', () => {

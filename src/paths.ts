@@ -1,5 +1,7 @@
 import type {KeyedSanityObject} from './diffPatch.js'
 
+const IS_DOTTABLE_RE = /^[A-Za-z_][A-Za-z0-9_]*$/
+
 /**
  * A segment of a path
  *
@@ -37,8 +39,10 @@ export function pathToString(path: Path): string {
 
     if (typeof segment === 'number') {
       return `${target}[${segment}]`
-    } else if (typeof segment === 'string' && (/^\d+$/.test(segment) || segment.includes('-'))) {
-      return `${target}["${segment}"]`
+    }
+
+    if (typeof segment === 'string' && !IS_DOTTABLE_RE.test(segment)) {
+      return `${target}['${segment}']`
     }
 
     if (typeof segment === 'string') {
