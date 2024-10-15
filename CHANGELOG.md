@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.4](https://github.com/rexxars/sanity-diff-patch/compare/v3.0.3...v3.0.4) (2024-10-15)
+
+### Bug Fixes
+
+- use correct escaping for unsafe property names in paths ([53f84f8](https://github.com/rexxars/sanity-diff-patch/commit/53f84f84da968f0689924cc1d8806d77be73f95f))
+
 ## [3.0.3](https://github.com/rexxars/sanity-diff-patch/compare/v3.0.2...v3.0.3) (2024-10-15)
 
 ### Bug Fixes
