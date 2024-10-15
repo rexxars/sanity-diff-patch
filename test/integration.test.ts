@@ -118,10 +118,15 @@ describe.skipIf(lacksConfig)(
 
         const trx = client.transaction().createOrReplace(input).serialize()
 
-        const result = await queue.add(() =>
-          client
-            .transaction([...trx, ...diff])
-            .commit({visibility: 'async', returnDocuments: true, returnFirst: true})
+        const result = await queue.add(
+          () =>
+            client.transaction([...trx, ...diff]).commit({
+              visibility: 'async',
+              returnDocuments: true,
+              returnFirst: true,
+              dryRun: true,
+            }),
+          {throwOnTimeout: true, timeout: 10000}
         )
 
         expect(omitIgnored(result)).toEqual(nullifyUndefinedArrayItems(omitIgnored(output)))
